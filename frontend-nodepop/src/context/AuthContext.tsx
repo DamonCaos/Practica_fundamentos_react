@@ -1,56 +1,55 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-    isAuthenticated: boolean;
-    login: (token: string, remember: boolean) => void;
-    logout: () => void;
-};
+  isAuthenticated: boolean;
+  login: (token: string, remember: boolean) => void;
+  logout: () => void;
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); 
-    const location = useLocation();
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-        if (token) {
-            setIsAuthenticated(true);
+  useEffect(() => {
+    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
-        }
-    
-    }, []);
+    console.log("Verificando autenticación inicial. Token:", token);
 
-    const navigate = useNavigate();
-    
-    const login = (token: string, remember: boolean) => {
-        if (remember) {
-            localStorage.setItem('authToken', token);
-        } else {
-            sessionStorage.setItem('authToken', token);
-        }
-        setIsAuthenticated(true);
-        navigate('/');
-    };
-    const logout = () => {
-        localStorage.removeItem('authToken');
-        sessionStorage.removeItem('authToken');
-        setIsAuthenticated(false);
-        navigate('/login');
-    };
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const login = (token: string, remember: boolean) => {
+    console.log("Guardando token:", token);
+
+    if (remember) {
+      localStorage.setItem("authToken", token);
+    } else {
+      sessionStorage.setItem("authToken", token);
+    }
+    setIsAuthenticated(true);
+    navigate("/adverts"); // Redirigir a la lista de anuncios tras login
+  };
+
+  const logout = () => {
+    console.log("Cerrando sesión...");
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+
+  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    };
-    return context; 
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

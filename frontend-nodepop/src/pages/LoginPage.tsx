@@ -14,15 +14,25 @@ const LoginPage = () => {
     setError("");
 
     try {
+      console.log("Enviando solicitud de login...");
       const response = await axios.post("http://localhost:3001/api/auth/login", {
         email,
         password,
       });
 
+      console.log("Respuesta del backend:", response.data);
+
       const token = response.data.token;
+
+      if (!token) {
+        throw new Error("No se recibió un token válido.");
+      }
+
+      console.log("Token recibido:", token);
       login(token, remember);
-    } catch (err) {
-      setError("Credenciales incorrectas");
+    } catch (err: any) {
+      console.error("Error en login:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Error al iniciar sesión.");
     }
   };
 

@@ -20,20 +20,28 @@ const AdvertsPage = () => {
     const fetchAdverts = async () => {
       try {
         const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+        
+        if (!token) {
+          setError("No estás autenticado. Inicia sesión.");
+          setLoading(false);
+          return;
+        }
+  
         const response = await axios.get("http://localhost:3001/api/v1/adverts", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         setAdverts(response.data);
       } catch (err) {
-        setError("Error loading adverts");
+        setError("Error al cargar los anuncios. Verifica tu sesión.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchAdverts();
   }, []);
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
