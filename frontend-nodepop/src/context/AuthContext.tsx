@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, Children } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -10,8 +10,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false); 
-    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); 
+    const location = useLocation();
 
     useEffect(() => {
         const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
@@ -21,6 +21,8 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
         }
     
     }, []);
+
+    const navigate = useNavigate();
     
     const login = (token: string, remember: boolean) => {
         if (remember) {
