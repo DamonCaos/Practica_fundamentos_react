@@ -61,13 +61,13 @@ const NewAdvertPage = () => {
 
   return (
     <div>
-      <h2>Crear Nuevo Anuncio</h2>
+      <h2>New Advert</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Nombre" value={formData.name} onChange={handleChange} required />
-        <input type="number" name="price" placeholder="Precio" value={formData.price} onChange={handleChange} required />
+        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
+        <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleChange} required />
         <select name="sale" value={formData.sale} onChange={handleChange}>
-          <option value="true">Venta</option>
-          <option value="false">Compra</option>
+          <option value="true">Sell</option>
+          <option value="false">Buy</option>
         </select>
         <input type="text" name="tags" placeholder="Tags (separados por comas)" value={formData.tags} onChange={handleChange} />
         <input type="text" name="photo" placeholder="URL de la imagen (opcional)" value={formData.photo} onChange={handleChange} />
