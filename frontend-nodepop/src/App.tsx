@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import AdvertsPage from "./pages/AdvertsPage";
-import DetailAdvertPage from "./pages/DetailAdvertPage"; 
+import DetailAdvertPage from "./pages/DetailAdvertPage";
 import NewAdvertPage from "./pages/NewAdvertPage";
+import EditAdvertPage from "./pages/EditAdvertPage"; // 🔥 Importamos la nueva página
 import { useAuth } from "./context/AuthContext";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
@@ -35,6 +36,14 @@ function App() {
         element={
           <PrivateRoute>
             <DetailAdvertPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/advert/:id/edit"
+        element={
+          <PrivateRoute>
+            <EditAdvertPage />
           </PrivateRoute>
         }
       />

@@ -85,6 +85,10 @@ const DetailAdvertPage = () => {
       <button onClick={handleDelete} style={{ marginLeft: "10px", color: "white", backgroundColor: "red" }}>
         Delete Advert
       </button>
+     <button onClick={() => navigate(`/advert/${advert.id}/edit`)} style={{ marginLeft: "10px" }}>
+        Edit Advert
+        </button>
+
     </div>
   );
 };
