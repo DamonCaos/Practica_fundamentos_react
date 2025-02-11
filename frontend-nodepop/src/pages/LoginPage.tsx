@@ -60,9 +60,9 @@ const LoginPage = () => {
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
           />
-          Recordar sesión
+          Remember me
         </label>
-        <button type="submit">Iniciar sesión</button>
+        <button type="submit">Login</button>
       </form>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

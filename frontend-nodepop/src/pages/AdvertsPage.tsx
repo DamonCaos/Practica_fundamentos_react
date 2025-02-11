@@ -76,66 +76,69 @@ const AdvertsPage = () => {
     fetchAdverts();
   };
 
-  if (loading) return <p>Cargando anuncios...</p>;
+  if (loading) return <p>Loading adverts....</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!adverts.length) return <p>No hay anuncios disponibles.</p>;
+  if (!adverts.length) return <p>No adverts yet</p>;
 
   return (
     <div>
         <Link to= '/advert/new'>
             <button>Create Advert</button>
         </Link>
-      <h2>Listado de Anuncios</h2>
+      <h2>Adverts</h2>
 
       {/* Formulario de filtros */}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="name"
-          placeholder="Buscar por nombre"
+          placeholder="Search by name"
           value={filters.name}
           onChange={handleFilterChange}
         />
         <input
           type="number"
           name="minPrice"
-          placeholder="Precio mínimo"
+          placeholder="Min price"
           value={filters.minPrice}
           onChange={handleFilterChange}
         />
         <input
           type="number"
           name="maxPrice"
-          placeholder="Precio máximo"
+          placeholder="Max price"
           value={filters.maxPrice}
           onChange={handleFilterChange}
         />
         <select name="sale" value={filters.sale} onChange={handleFilterChange}>
-          <option value="">Todos</option>
-          <option value="true">Venta</option>
-          <option value="false">Compra</option>
+          <option value="">All</option>
+          <option value="true">Sell</option>
+          <option value="false">Buy</option>
         </select>
         <input
           type="text"
           name="tag"
-          placeholder="Filtrar por tag"
+          placeholder="Sort by tag"
           value={filters.tag}
           onChange={handleFilterChange}
         />
-        <button type="submit">Filtrar</button>
+        <button type="submit">Sort</button>
       </form>
-
       <ul>
         {adverts.map((advert) => (
-          <li key={advert.id}>
-            <h3>{advert.name}</h3>
-            <p>{advert.price} €</p>
-            <p>{advert.sale ? "Venta" : "Compra"}</p>
-            <p>Tags: {advert.tags.join(", ")}</p>
-            {advert.photo && <img src={advert.photo} alt={advert.name} width="150" />}
-          </li>
-        ))}
-      </ul>
+        <li key={advert.id}>
+        <Link to={`/advert/${advert.id}`}>
+        <h3>{advert.name}</h3>
+        </Link>
+      <p>{advert.price} €</p>
+      <p>{advert.sale ? "Venta" : "Compra"}</p>
+      <p>Tags: {advert.tags.join(", ")}</p>
+      {advert.photo && <img src={advert.photo} alt={advert.name} width="150" />}
+    </li>
+  ))}
+</ul>
+     
+
     </div>
   );
 };
