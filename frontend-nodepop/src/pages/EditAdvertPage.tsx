@@ -57,9 +57,12 @@ const EditAdvertPage = () => {
     });
   };
 
+  const [succesMessage, setSuccessMessage] = useState("")
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("")
 
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
@@ -81,8 +84,8 @@ const EditAdvertPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Advert updated successfully");
-      navigate(`/advert/${id}`);
+      setSuccessMessage("Advert updated successfully!");
+    setTimeout(() => navigate(`/advert/${id}`), 1500);
     } catch (err) {
       console.error("❌ Error updating advert:", err);
       setError("Could not update the advert.");

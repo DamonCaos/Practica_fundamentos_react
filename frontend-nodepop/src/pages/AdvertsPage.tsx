@@ -124,19 +124,20 @@ const AdvertsPage = () => {
         />
         <button type="submit">Sort</button>
       </form>
-      <ul>
-        {adverts.map((advert) => (
-        <li key={advert.id}>
-        <Link to={`/advert/${advert.id}`}>
-        <h3>{advert.name}</h3>
-        </Link>
-      <p>{advert.price} €</p>
-      <p>{advert.sale ? "Venta" : "Compra"}</p>
-      <p>Tags: {advert.tags.join(", ")}</p>
-      {advert.photo && <img src={advert.photo} alt={advert.name} width="150" />}
-    </li>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {adverts.map((advert) => (
+    <div key={advert.id} className="border rounded-lg p-4 shadow-lg">
+      <Link to={`/advert/${advert.id}`} className="block">
+        <h3 className="text-lg font-semibold">{advert.name}</h3>
+      </Link>
+      <p className="text-gray-600">{advert.price} €</p>
+      <p className="text-sm">{advert.sale ? "For Sale" : "Looking to Buy"}</p>
+      <p className="text-sm text-gray-500">Tags: {advert.tags.join(", ")}</p>
+      {advert.photo && <img src={advert.photo} alt={advert.name} className="mt-2 rounded-lg w-full h-40 object-cover" />}
+    </div>
   ))}
-</ul>
+</div>
+
      
 
     </div>
