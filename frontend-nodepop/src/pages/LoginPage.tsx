@@ -22,7 +22,7 @@ const LoginPage = () => {
 
       console.log("Respuesta del backend:", response.data);
 
-      const token = response.data.token;
+      const token = response.data.accessToken;
 
       if (!token) {
         throw new Error("No se recibió un token válido.");
@@ -70,3 +70,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
