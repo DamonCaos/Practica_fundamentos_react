@@ -24,36 +24,40 @@ const NewAdvertPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+  
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-
+  
       if (!token) {
         setError("No estás autenticado. Inicia sesión.");
         return;
       }
-
-      const response = await axios.post(
-        "http://localhost:3001/api/v1/adverts",
-        {
-          name: formData.name,
-          price: Number(formData.price),
-          sale: formData.sale === "true",
-          tags: formData.tags.split(",").map(tag => tag.trim()), // Convierte string a array
-          photo: formData.photo || null,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+  
+      // Datos que se enviarán
+      const advertData: any = {
+        name: formData.name,
+        price: Number(formData.price), // Asegurar que sea un número
+        sale: formData.sale === "true", // Convertir string a booleano
+        tags: formData.tags.split(",").map(tag => tag.trim()), // Convertir a array de strings
+        };
+        if (formData.photo.trim() !== "") {
+            advertData.photo = formData.photo
         }
-      );
-
-      console.log("Anuncio creado:", response.data);
-      navigate("/adverts"); // Redirigir a la lista de anuncios tras crear
-    } catch (err) {
-      console.error("Error al crear anuncio:", err);
-      setError("No se pudo crear el anuncio.");
+  
+      console.log("📤 Enviando anuncio:", advertData); // Debug
+  
+      const response = await axios.post("http://localhost:3001/api/v1/adverts", advertData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      console.log("✅ Anuncio creado:", response.data);
+      navigate("/adverts");
+    } catch (err: any) {
+      console.error("❌ Error al crear anuncio:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "No se pudo crear el anuncio.");
     }
   };
+  
 
   return (
     <div>
