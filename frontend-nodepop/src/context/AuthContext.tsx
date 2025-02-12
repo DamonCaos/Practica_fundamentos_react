@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       sessionStorage.setItem("authToken", token);
     }
     setIsAuthenticated(true);
-    navigate("/adverts"); // Redirect to adverts page after login
+    navigate("/"); // Redirect to home page after login
   };
 
   const logout = () => {
