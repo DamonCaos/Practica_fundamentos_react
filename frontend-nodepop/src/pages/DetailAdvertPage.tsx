@@ -12,11 +12,14 @@ interface Advert {
 }
 
 const DetailAdvertPage = () => {
-  const { id } = useParams(); // Get the advert ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [advert, setAdvert] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  // State for confirmation modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchAdvert();
@@ -39,16 +42,13 @@ const DetailAdvertPage = () => {
       setAdvert(response.data);
     } catch (err) {
       console.error("❌ Error fetching advert:", err);
-      setError("Could not load the advert.");
+      setError("Failed to load advert.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this advert?");
-    if (!confirmDelete) return;
-
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
@@ -65,17 +65,11 @@ const DetailAdvertPage = () => {
       navigate("/adverts"); // Redirect after deletion
     } catch (err) {
       console.error("❌ Error deleting advert:", err);
-      setError("Could not delete the advert.");
+      setError("Failed to delete advert.");
     }
   };
 
-  if (loading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-      </div>
-    );
-  
+  if (loading) return <p>Loading advert...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!advert) return <p>The advert does not exist.</p>;
 
@@ -83,22 +77,31 @@ const DetailAdvertPage = () => {
     <div>
       <h2>{advert.name}</h2>
       <p>Price: {advert.price} €</p>
-      <p>Type: {advert.sale ? "For Sale" : "Looking to Buy"}</p>
+      <p>Type: {advert.sale ? "For Sale" : "Wanted"}</p>
       <p>Tags: {advert.tags.join(", ")}</p>
       {advert.photo && <img src={advert.photo} alt={advert.name} width="200" />}
       <br />
       <button onClick={() => navigate(-1)}>Go Back</button>
-      <button onClick={handleDelete} style={{ marginLeft: "10px", color: "white", backgroundColor: "red" }}>
+      <button onClick={() => setIsModalOpen(true)} style={{ marginLeft: "10px", color: "white", backgroundColor: "red" }}>
         Delete Advert
       </button>
-     <button onClick={() => navigate(`/advert/${advert.id}/edit`)} style={{ marginLeft: "10px" }}>
-        Edit Advert
-        </button>
 
+      {/* Confirmation Modal */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Are you sure you want to delete this advert?</p>
+            <button onClick={handleDelete} style={{ backgroundColor: "red", color: "white", marginRight: "10px" }}>Yes, delete</button>
+            <button onClick={() => setIsModalOpen(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default DetailAdvertPage;
+
+
 
 

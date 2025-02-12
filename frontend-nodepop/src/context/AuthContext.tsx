@@ -15,32 +15,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-
-    console.log("Verificando autenticación inicial. Token:", token);
-
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    setIsAuthenticated(!!token);
   }, []);
 
   const login = (token: string, remember: boolean) => {
-    console.log("Guardando token:", token);
-
     if (remember) {
       localStorage.setItem("authToken", token);
     } else {
       sessionStorage.setItem("authToken", token);
     }
     setIsAuthenticated(true);
-    navigate("/adverts"); // Redirigir a la lista de anuncios tras login
+    navigate("/adverts"); // Redirect to adverts page after login
   };
 
   const logout = () => {
-    console.log("Cerrando sesión...");
+    console.log("🔴 Logging out...");
     localStorage.removeItem("authToken");
     sessionStorage.removeItem("authToken");
     setIsAuthenticated(false);
-    navigate("/login");
+    navigate("/"); // Redirect to home page after logout
   };
 
   return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;

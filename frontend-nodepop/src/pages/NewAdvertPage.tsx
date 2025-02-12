@@ -36,7 +36,7 @@ const NewAdvertPage = () => {
       // Datos que se enviarán
       const advertData: any = {
         name: formData.name,
-        price: Number(formData.price), // Asegurar que sea un número
+        price: Number(formData.price), 
         sale: formData.sale === "true", // Convertir string a booleano
         tags: formData.tags.split(",").map(tag => tag.trim()), // Convertir a array de strings
         };
@@ -70,8 +70,8 @@ const NewAdvertPage = () => {
           <option value="false">Buy</option>
         </select>
         <input type="text" name="tags" placeholder="Tags (separados por comas)" value={formData.tags} onChange={handleChange} />
-        <input type="text" name="photo" placeholder="URL de la imagen (opcional)" value={formData.photo} onChange={handleChange} />
-        <button type="submit">Crear Anuncio</button>
+        <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} />
+        <button type="submit">Create</button>
       </form>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
