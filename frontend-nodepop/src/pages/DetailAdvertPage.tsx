@@ -1,24 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-
-interface Advert {
-  id: string;
-  name: string;
-  price: number;
-  sale: boolean;
-  tags: string[];
-  photo?: string;
-}
+import styles from "../styles/DetailAdvertPage.module.css";
 
 const DetailAdvertPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [advert, setAdvert] = useState<Advert | null>(null);
+  const [advert, setAdvert] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  // State for confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -70,29 +60,35 @@ const DetailAdvertPage = () => {
   };
 
   if (loading) return <p>Loading advert...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
   if (!advert) return <p>The advert does not exist.</p>;
 
   return (
-    <div>
-      <h2>{advert.name}</h2>
-      <p>Price: {advert.price} €</p>
-      <p>Type: {advert.sale ? "For Sale" : "Wanted"}</p>
-      <p>Tags: {advert.tags.join(", ")}</p>
-      {advert.photo && <img src={advert.photo} alt={advert.name} width="200" />}
+    <div className={styles.container}>
+      <h2 className={styles.title}>{advert.name}</h2>
+      <p className={styles.details}>Price: {advert.price} €</p>
+      <p className={styles.details}>Type: {advert.sale ? "For Sale" : "Wanted"}</p>
+      <p className={styles.details}>Tags: {advert.tags.join(", ")}</p>
+      {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.image} />}
       <br />
-      <button onClick={() => navigate(-1)}>Go Back</button>
-      <button onClick={() => setIsModalOpen(true)} style={{ marginLeft: "10px", color: "white", backgroundColor: "red" }}>
+      <button onClick={() => navigate(-1)} className={`${styles.button} ${styles.backButton}`}>
+        Go Back
+      </button>
+      <button onClick={() => setIsModalOpen(true)} className={`${styles.button} ${styles.deleteButton}`}>
         Delete Advert
       </button>
 
       {/* Confirmation Modal */}
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
             <p>Are you sure you want to delete this advert?</p>
-            <button onClick={handleDelete} style={{ backgroundColor: "red", color: "white", marginRight: "10px" }}>Yes, delete</button>
-            <button onClick={() => setIsModalOpen(false)}>Cancel</button>
+            <button onClick={handleDelete} className={styles.deleteButton}>
+              Yes, delete
+            </button>
+            <button onClick={() => setIsModalOpen(false)} className={styles.backButton}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
@@ -101,6 +97,7 @@ const DetailAdvertPage = () => {
 };
 
 export default DetailAdvertPage;
+
 
 
 

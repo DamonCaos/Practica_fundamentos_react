@@ -1,0 +1,136 @@
+/* Contenedor general de la página */
+.advertsContainer {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  /* Título de la página */
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+  }
+  
+  /* Botón para crear anuncio */
+  .createButton {
+    display: block;
+    width: max-content;
+    background-color: #2563eb;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .createButton:hover {
+    background-color: #1e40af;
+    transform: scale(1.05);
+  }
+  
+  /* Estilos para el formulario de filtros */
+  .filterForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .filterInput,
+  .filterSelect {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+    font-size: 1rem;
+  }
+  
+  .filterButton {
+    background-color: #10b981;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .filterButton:hover {
+    background-color: #059669;
+    transform: scale(1.05);
+  }
+  
+  /* Contenedor de los anuncios */
+  .advertsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Estilos de cada tarjeta de anuncio */
+  .advertCard {
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .advertCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .advertTitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2563eb;
+    text-decoration: none;
+  }
+  
+  .advertTitle:hover {
+    text-decoration: underline;
+  }
+  
+  .advertDetails {
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+  
+  .advertPrice {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #10b981;
+  }
+  
+  .advertImage {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  /* Responsive para pantallas pequeñas */
+  @media (max-width: 768px) {
+    .filterForm {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .filterInput,
+    .filterSelect {
+      width: 100%;
+    }
+  }
+  

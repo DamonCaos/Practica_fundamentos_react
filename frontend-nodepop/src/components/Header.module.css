@@ -2,7 +2,29 @@
     background-color: #1e3a8a;
     color: white;
     padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     text-align: center;
     font-size: 1.5rem;
   }
+  
+  .header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .header a:hover {
+    color: #ffcc00;
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+  
   

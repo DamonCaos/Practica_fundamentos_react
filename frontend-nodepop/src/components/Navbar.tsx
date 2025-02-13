@@ -1,35 +1,23 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import styles from "./Navbar.module.css"; 
+import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
     <nav className={styles.navbar}>
-      <div className="container">
-        <Link to="/" className="text-blue-600 hover:underline">
-          Home
-        </Link>
+      <div className={styles.container}>
+        <Link to="/" className={styles.link}>Home</Link>
+        <Link to="/adverts" className={styles.link}>Adverts</Link>
+
         {isAuthenticated ? (
           <>
-            <Link to="/adverts" className="text-blue-600 hover:underline">
-              View Adverts
-            </Link>
-            <Link to="/advert/new" className="text-green-600 hover:underline">
-              Create Advert
-            </Link>
-            <button
-              onClick={logout}
-              className="text-red-600 hover:underline"
-            >
-              Logout
-            </button>
+            <Link to="/advert/new" className={styles.link}>Create Advert</Link>
+            <button onClick={logout} className={`${styles.link} ${styles.logout}`}>Logout</button>
           </>
         ) : (
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
+          <Link to="/login" className={styles.link}>Login</Link>
         )}
       </div>
     </nav>

@@ -3,6 +3,17 @@
     color: white;
     text-align: center;
     padding: 10px;
+    font-size: 0.9rem;
     margin-top: auto;
+  }
+  
+  .footer p {
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .footer p:hover {
+    opacity: 1;
+    color: #ffcc00;
   }
   
