@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import AdvertsPage from "./pages/AdvertsPage";
@@ -15,38 +16,27 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
+      <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
       <Route
         path="/adverts"
-        element={
-          <PrivateRoute>
-            <AdvertsPage />
-          </PrivateRoute>
-        }
+        element={<PrivateRoute><MainLayout><AdvertsPage /></MainLayout></PrivateRoute>}
       />
       <Route
         path="/advert/new"
-        element={
-          <PrivateRoute>
-            <NewAdvertPage />
-          </PrivateRoute>
-        }
+        element={<PrivateRoute><MainLayout><NewAdvertPage /></MainLayout></PrivateRoute>}
       />
       <Route
         path="/advert/:id"
-        element={
-          <PrivateRoute>
-            <DetailAdvertPage />
-          </PrivateRoute>
-        }
+        element={<PrivateRoute><MainLayout><DetailAdvertPage /></MainLayout></PrivateRoute>}
       />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<MainLayout><NotFoundPage /></MainLayout>} />
     </Routes>
   );
 }
 
 export default App;
+
 
 
 

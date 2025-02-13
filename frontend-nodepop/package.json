@@ -11,9 +11,9 @@
     "tailwind:init": "tailwindcss init -p"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.6",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.9",
+    "clsx": "^2.1.1",
     "prettier": "^3.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
