@@ -123,3 +123,69 @@ Copiar
 ├── 📄 package.json
 ├── 📄 README.md
 
+
+# 📌 Nodepop - Advert Management App
+
+Nodepop es una aplicación web para la gestión de anuncios de compra y venta, desarrollada con **React**, **TypeScript** y **CSS Modules**, con un backend basado en **Node.js** y una API REST.
+
+## 🚀 Características
+- 📋 Listado de anuncios con paginación.
+- 🔍 Filtros avanzados (nombre, tipo, precio y tags).
+- 🆕 Creación, edición y eliminación de anuncios.
+- 🔐 Autenticación de usuario con JWT.
+- 🖥️ Diseño responsivo y estilizado con **CSS Modules**.
+
+---
+
+## 📦 Instalación y configuración
+
+### **1️⃣ Clonar el repositorio**
+```bash
+git clone https://github.com/tu-usuario/tu-repositorio.git
+cd tu-repositorio
+2️⃣ Instalar dependencias
+Ejecuta:
+
+bash
+Copiar
+npm install
+3️⃣ Configurar el entorno
+Crea un archivo .env en la raíz del proyecto.
+Agrega las siguientes variables (ajustándolas según el backend):
+env
+Copiar
+VITE_API_URL=http://localhost:3001/api/v1
+4️⃣ Iniciar la aplicación
+Ejecuta:
+
+bash
+Copiar
+npm run dev
+Tu aplicación estará disponible en: http://localhost:5173
+
+🔑 Autenticación
+Los usuarios deben iniciar sesión para acceder a ciertas secciones.
+El token JWT se almacena en localStorage o sessionStorage.
+🎨 Estilos y diseño
+CSS Modules para modularización de estilos.
+Diseño responsivo con flexbox y grid.
+Animaciones y transiciones CSS.
+📄 API Endpoints usados
+Método	Endpoint	Descripción
+GET	/api/v1/adverts	Obtener lista de anuncios
+POST	/api/v1/adverts	Crear un nuevo anuncio
+GET	/api/v1/adverts/:id	Obtener detalle de un anuncio
+PUT	/api/v1/adverts/:id	Editar un anuncio existente
+DELETE	/api/v1/adverts/:id	Eliminar un anuncio
+🛠️ Tecnologías utilizadas
+React + Vite ⚡
+TypeScript 🟦
+CSS Modules 🎨
+React Router 🔀
+Axios 📡
+Node.js + Express (Backend) 🟢
+📝 Autor
+👤 Tu Nombre 📧 Contacto: tu-email@example.com
+
+📜 Licencia
+Este proyecto está bajo la licencia MIT.
