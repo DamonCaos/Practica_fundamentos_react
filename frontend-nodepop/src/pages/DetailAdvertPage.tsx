@@ -3,12 +3,23 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/DetailAdvertPage.module.css";
 
+interface Advert {
+  id: string;
+  name: string;
+  price: number;
+  sale: boolean;
+  tags: string[];
+  photo?: string;
+}
+
 const DetailAdvertPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [advert, setAdvert] = useState(null);
+  const [advert, setAdvert] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // State for confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -52,7 +63,7 @@ const DetailAdvertPage = () => {
       });
 
       console.log("✅ Advert deleted");
-      navigate("/adverts"); // Redirect after deletion
+      navigate("/adverts");
     } catch (err) {
       console.error("❌ Error deleting advert:", err);
       setError("Failed to delete advert.");
@@ -66,29 +77,39 @@ const DetailAdvertPage = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>{advert.name}</h2>
-      <p className={styles.details}>Price: {advert.price} €</p>
-      <p className={styles.details}>Type: {advert.sale ? "For Sale" : "Wanted"}</p>
-      <p className={styles.details}>Tags: {advert.tags.join(", ")}</p>
+      <p className={styles.price}>Price: {advert.price} €</p>
+      <p className={styles.type}>Type: {advert.sale ? "For Sale" : "Wanted"}</p>
+      <p className={styles.tags}>Tags: {advert.tags.join(", ")}</p>
       {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.image} />}
-      <br />
-      <button onClick={() => navigate(-1)} className={`${styles.button} ${styles.backButton}`}>
-        Go Back
-      </button>
-      <button onClick={() => setIsModalOpen(true)} className={`${styles.button} ${styles.deleteButton}`}>
-        Delete Advert
-      </button>
+      
+      <div className={styles.buttonContainer}>
+        <button onClick={() => navigate(-1)} className={styles.backButton}>
+          Go Back
+        </button>
+
+        {/* Nuevo botón para editar el anuncio */}
+        <button onClick={() => navigate(`/advert/${id}/edit`)} className={styles.editButton}>
+          Edit Advert
+        </button>
+
+        <button onClick={() => setIsModalOpen(true)} className={styles.deleteButton}>
+          Delete Advert
+        </button>
+      </div>
 
       {/* Confirmation Modal */}
       {isModalOpen && (
-        <div className={styles.modal}>
+        <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <p>Are you sure you want to delete this advert?</p>
-            <button onClick={handleDelete} className={styles.deleteButton}>
-              Yes, delete
-            </button>
-            <button onClick={() => setIsModalOpen(false)} className={styles.backButton}>
-              Cancel
-            </button>
+            <div className={styles.modalButtons}>
+              <button onClick={handleDelete} className={styles.confirmDeleteButton}>
+                Yes, delete
+              </button>
+              <button onClick={() => setIsModalOpen(false)} className={styles.cancelButton}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

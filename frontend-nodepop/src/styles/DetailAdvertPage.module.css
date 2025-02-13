@@ -1,7 +1,8 @@
 .container {
-    max-width: 800px;
+    max-width: 600px;
     margin: auto;
     padding: 20px;
+    text-align: center;
   }
   
   .title {
@@ -11,31 +12,41 @@
     margin-bottom: 10px;
   }
   
-  .details {
-    font-size: 1rem;
-    color: #4b5563;
-    margin-bottom: 10px;
+  .price, .type, .tags {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
   }
   
   .image {
     width: 100%;
-    max-height: 300px;
-    object-fit: cover;
+    max-width: 400px;
     border-radius: 8px;
-    margin-top: 10px;
+    margin-top: 15px;
   }
   
-  .button {
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .backButton, .editButton, .deleteButton {
     padding: 10px 15px;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 10px;
+    transition: 0.3s;
   }
   
   .backButton {
-    background-color: #2563eb;
+    background-color: gray;
+    color: white;
+  }
+  
+  .editButton {
+    background-color: #007bff;
     color: white;
   }
   
@@ -44,27 +55,65 @@
     color: white;
   }
   
+  .backButton:hover {
+    background-color: darkgray;
+  }
+  
+  .editButton:hover {
+    background-color: #0056b3;
+  }
+  
   .deleteButton:hover {
     background-color: darkred;
   }
   
-  /* Modal */
-  .modal {
+  /* Modal styles */
+  .modalOverlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
   
   .modalContent {
     background: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     text-align: center;
+  }
+  
+  .modalButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .confirmDeleteButton, .cancelButton {
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .confirmDeleteButton {
+    background-color: red;
+    color: white;
+  }
+  
+  .cancelButton {
+    background-color: gray;
+    color: white;
+  }
+  
+  .confirmDeleteButton:hover {
+    background-color: darkred;
+  }
+  
+  .cancelButton:hover {
+    background-color: darkgray;
   }
   

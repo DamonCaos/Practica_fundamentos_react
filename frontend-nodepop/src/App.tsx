@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import AdvertsPage from "./pages/AdvertsPage";
 import DetailAdvertPage from "./pages/DetailAdvertPage";
 import NewAdvertPage from "./pages/NewAdvertPage";
+import EditAdvertPage from "./pages/EditAdvertPage"; // ¡Importamos la página de edición!
 import NotFoundPage from "./pages/NotFoundPage";
 import { useAuth } from "./context/AuthContext";
 
@@ -15,20 +16,77 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 
 function App() {
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/adverts" element={<PrivateRoute><AdvertsPage /></PrivateRoute>} />
-        <Route path="/advert/new" element={<PrivateRoute><NewAdvertPage /></PrivateRoute>} />
-        <Route path="/advert/:id" element={<PrivateRoute><DetailAdvertPage /></PrivateRoute>} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <MainLayout>
+            <HomePage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <MainLayout>
+            <LoginPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/adverts"
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <AdvertsPage />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/advert/new"
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <NewAdvertPage />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/advert/:id"
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <DetailAdvertPage />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/advert/:id/edit"
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <EditAdvertPage />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <MainLayout>
+            <NotFoundPage />
+          </MainLayout>
+        }
+      />
+    </Routes>
   );
 }
 
 export default App;
+
 
 
 

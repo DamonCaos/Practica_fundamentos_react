@@ -29,37 +29,43 @@ const AdvertsPage = () => {
   useEffect(() => {
     fetchAdverts();
   }, []);
-
   const fetchAdverts = async () => {
     try {
-      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+        const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
-      if (!token) {
-        setError("No estás autenticado. Inicia sesión.");
-        setLoading(false);
-        return;
-      }
+        if (!token) {
+            setError("You are not authenticated. Please log in.");
+            setLoading(false);
+            return;
+        }
 
-      // Construir la URL con filtros
-      const queryParams = new URLSearchParams();
-      if (filters.name) queryParams.append("name", filters.name);
-      if (filters.minPrice) queryParams.append("price_gte", filters.minPrice);
-      if (filters.maxPrice) queryParams.append("price_lte", filters.maxPrice);
-      if (filters.sale) queryParams.append("sale", filters.sale);
-      if (filters.tag) queryParams.append("tag", filters.tag);
+        // Construir la URL con filtros
+        const queryParams = new URLSearchParams();
 
-      const response = await axios.get(`http://localhost:3001/api/v1/adverts?${queryParams}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        if (filters.name) queryParams.append("name", filters.name);
+        if (filters.sale) queryParams.append("sale", filters.sale);
+        if (filters.tag) queryParams.append("tag", filters.tag);
+        
+       
+        if (filters.minPrice && filters.maxPrice) {
+            queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
+        }
 
-      setAdverts(response.data);
+        const response = await axios.get(`http://localhost:3001/api/v1/adverts?${queryParams.toString()}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setAdverts(response.data);
     } catch (err) {
-      console.error("❌ Error fetching adverts:", err);
-      setError("Failed to load adverts.");
+        console.error("❌ Error fetching adverts:", err);
+        setError("Failed to load adverts.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
+  
+  
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters({

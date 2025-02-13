@@ -1,0 +1,77 @@
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9fafb;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+}
+
+/* Descripción */
+.description {
+    font-size: 1.1rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+}
+
+/* Botones */
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.loginButton {
+    background-color: #2563eb;
+    color: white;
+}
+
+.loginButton:hover {
+    background-color: #1e40af;
+}
+
+.viewButton {
+    background-color: #10b981;
+    color: white;
+}
+
+.viewButton:hover {
+    background-color: #047857;
+}
+
+.createButton {
+    background-color: #facc15;
+    color: #1e293b;
+}
+
+.createButton:hover {
+    background-color: #ca8a04;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .buttonContainer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
