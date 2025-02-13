@@ -48,3 +48,78 @@ export default tseslint.config({
   },
 })
 ```
+
+Nodepop es una aplicación web para comprar y vender artículos. Permite a los usuarios registrarse, iniciar sesión y gestionar anuncios de productos, incluyendo la funcionalidad de filtrado, creación, edición y eliminación.
+
+---
+
+## 🚀 Tecnologías utilizadas
+- ⚛ **Frontend:** React + TypeScript + CSS Modules
+- ⚡ **Backend:** Node.js con API REST
+- 📦 **Gestor de paquetes:** npm
+- 🏗 **Construcción:** Vite
+- 💅 **Estilos:** CSS Modules con diseño responsive
+
+---
+
+## 📥 Instalación
+
+### 1️⃣ Clonar el repositorio
+```bash
+git clone https://github.com/tu-usuario/tu-repo-nodepop.git
+cd tu-repo-nodepop
+2️⃣ Instalar dependencias
+Ejecuta el siguiente comando en la raíz del proyecto:
+
+bash
+Mostrar siempre los detalles
+
+Copiar
+npm install
+3️⃣ Configurar el backend
+Asegúrate de tener el backend corriendo. Si estás usando sparrest.js:
+bash
+Mostrar siempre los detalles
+
+Copiar
+npm install -g sparrest
+sparrest
+Si usas un backend personalizado, asegúrate de ejecutarlo en http://localhost:3001.
+▶️ Ejecutar la aplicación
+Para iniciar el frontend en modo desarrollo:
+
+bash
+Mostrar siempre los detalles
+
+Copiar
+npm run dev
+Accede a http://localhost:5173/ en tu navegador.
+
+🛠 Configuración del entorno
+Si el backend necesita un token de autenticación, guárdalo en sessionStorage o localStorage al iniciar sesión.
+
+🖥 Funcionalidades
+✅ Registro e inicio de sesión
+✅ Listado de anuncios con filtros avanzados
+✅ Creación, edición y eliminación de anuncios
+✅ Protección de rutas con autenticación
+✅ Interfaz responsive y moderna
+
+📂 Estructura del proyecto
+bash
+Mostrar siempre los detalles
+
+Copiar
+📦 tu-repo-nodepop
+├── 📂 src
+│   ├── 📂 components    # Componentes reutilizables
+│   ├── 📂 layouts       # Layout principal
+│   ├── 📂 pages         # Páginas de la app
+│   ├── 📂 styles        # CSS Modules
+│   ├── 📂 context       # Context API (Auth)
+│   ├── App.tsx         # Configuración principal de rutas
+│   ├── main.tsx        # Punto de entrada
+│   ├── vite.config.ts  # Configuración de Vite
+├── 📄 package.json
+├── 📄 README.md
+
