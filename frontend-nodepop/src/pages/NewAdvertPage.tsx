@@ -2,9 +2,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/NewAdvertPage.module.css";
+import { useNotification } from "../context/NotificationContext"; // 🟢 Importar el contexto de notificaciones
 
 const NewAdvertPage = () => {
   const navigate = useNavigate();
+  const { addNotification } = useNotification(); // 🟢 Usar el sistema de notificaciones
+  
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -13,7 +16,7 @@ const NewAdvertPage = () => {
     photo: "",
   });
 
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // 🟢 Estado para indicar si está cargando
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -24,13 +27,14 @@ const NewAdvertPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setLoading(true); // 🟢 Activar el estado de carga
 
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
       if (!token) {
-        setError("You are not authenticated. Please log in.");
+        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
+        setLoading(false);
         return;
       }
 
@@ -51,11 +55,13 @@ const NewAdvertPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Advert created");
+      addNotification("Advert created successfully!", "success"); // 🟢 Notificación de éxito
       navigate("/adverts");
     } catch (err: any) {
       console.error("❌ Error creating advert:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Could not create advert.");
+      addNotification(err.response?.data?.message || "Could not create advert.", "error"); // 🟢 Notificación de error
+    } finally {
+      setLoading(false); // 🟢 Desactivar estado de carga
     }
   };
 
@@ -71,11 +77,14 @@ const NewAdvertPage = () => {
         </select>
         <input type="text" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} className={styles.input} />
         <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} className={styles.input} />
-        <button type="submit" className={`${styles.button} ${styles.createButton}`}>Create</button>
+        
+        <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={loading}>
+          {loading ? "Creating..." : "Create"}
+        </button>
       </form>
-      {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 };
 
 export default NewAdvertPage;
+

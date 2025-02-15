@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 import axios from "axios";
 import styles from "../styles/LoginPage.module.css";
 
 const LoginPage = () => {
   const { login } = useAuth();
+  const { addNotification } = useNotification(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
     try {
       console.log("Sending login request...");
@@ -31,9 +31,15 @@ const LoginPage = () => {
 
       console.log("Token received:", token);
       login(token, remember);
+
+      // 🔔 Notificación de éxito
+      addNotification("Login successful!", "success");
+
     } catch (err: any) {
       console.error("Login error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Error logging in.");
+      
+      // 🔔 Notificación de error en lugar de `setError`
+      addNotification(err.response?.data?.message || "Error logging in.", "error");
     }
   };
 
@@ -41,15 +47,32 @@ const LoginPage = () => {
     <div className={styles.container}>
       <h2 className={styles.title}>Login</h2>
       <form onSubmit={handleLogin} className={styles.form}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.input} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input} />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className={styles.input}
+        />
         <label className={styles.rememberMe}>
-          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
           Remember me
         </label>
         <button type="submit" className={styles.button}>Login</button>
       </form>
-      {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 };

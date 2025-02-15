@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import styles from "./MainLayout.module.css"; 
+import Notification from "../components/Notification"; // Importamos el componente
+import styles from "./MainLayout.module.css";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,10 +11,11 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className={styles.container}>
+    <div className={styles.layoutContainer}>
       <Header />
       <Navbar />
-      <main className={styles.content}>{children}</main>
+      <Notification /> 
+      <main className={styles.mainContent}>{children}</main>
       <Footer />
     </div>
   );

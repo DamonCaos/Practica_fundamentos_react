@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "../styles/AdvertsPage.module.css"; 
+import { useNotification } from "../context/NotificationContext"; // 🟢 Importar contexto de notificaciones
 
 interface Advert {
   id: string;
@@ -15,7 +16,8 @@ interface Advert {
 const AdvertsPage = () => {
   const [adverts, setAdverts] = useState<Advert[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  
+  const { addNotification } = useNotification(); // 🟢 Usar notificaciones
 
   // Estado para filtros
   const [filters, setFilters] = useState({
@@ -29,43 +31,39 @@ const AdvertsPage = () => {
   useEffect(() => {
     fetchAdverts();
   }, []);
+
   const fetchAdverts = async () => {
     try {
-        const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
-        if (!token) {
-            setError("You are not authenticated. Please log in.");
-            setLoading(false);
-            return;
-        }
-
-        // Construir la URL con filtros
-        const queryParams = new URLSearchParams();
-
-        if (filters.name) queryParams.append("name", filters.name);
-        if (filters.sale) queryParams.append("sale", filters.sale);
-        if (filters.tag) queryParams.append("tag", filters.tag);
-        
-       
-        if (filters.minPrice && filters.maxPrice) {
-            queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
-        }
-
-        const response = await axios.get(`http://localhost:3001/api/v1/adverts?${queryParams.toString()}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setAdverts(response.data);
-    } catch (err) {
-        console.error("❌ Error fetching adverts:", err);
-        setError("Failed to load adverts.");
-    } finally {
+      if (!token) {
+        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
         setLoading(false);
-    }
-};
+        return;
+      }
 
-  
-  
+      const queryParams = new URLSearchParams();
+
+      if (filters.name) queryParams.append("name", filters.name);
+      if (filters.sale) queryParams.append("sale", filters.sale);
+      if (filters.tag) queryParams.append("tag", filters.tag);
+      if (filters.minPrice && filters.maxPrice) {
+        queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
+      }
+
+      const response = await axios.get(`http://localhost:3001/api/v1/adverts?${queryParams.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setAdverts(response.data);
+      addNotification("Adverts loaded successfully!", "success"); // 🟢 Notificación de éxito
+    } catch (err) {
+      console.error("❌ Error fetching adverts:", err);
+      addNotification("Failed to load adverts.", "error"); // 🟢 Notificación de error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters({
@@ -78,10 +76,6 @@ const AdvertsPage = () => {
     e.preventDefault();
     fetchAdverts();
   };
-
-  if (loading) return <p>Loading adverts...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!adverts.length) return <p>No adverts yet</p>;
 
   return (
     <div className={styles.advertsContainer}>
@@ -135,22 +129,29 @@ const AdvertsPage = () => {
 
       {/* Lista de anuncios */}
       <div className={styles.advertsGrid}>
-        {adverts.map((advert) => (
-          <div key={advert.id} className={styles.advertCard}>
-            <Link to={`/advert/${advert.id}`} className={styles.advertTitle}>
-              <h3>{advert.name}</h3>
-            </Link>
-            <p className={styles.advertPrice}>{advert.price} €</p>
-            <p className={styles.advertDetails}>{advert.sale ? "For Sale" : "Looking to Buy"}</p>
-            <p className={styles.advertDetails}>Tags: {advert.tags.join(", ")}</p>
-            {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.advertImage} />}
-          </div>
-        ))}
+        {loading ? (
+          <p>Loading adverts...</p>
+        ) : adverts.length === 0 ? (
+          <p>No adverts yet</p>
+        ) : (
+          adverts.map((advert) => (
+            <div key={advert.id} className={styles.advertCard}>
+              <Link to={`/advert/${advert.id}`} className={styles.advertTitle}>
+                <h3>{advert.name}</h3>
+              </Link>
+              <p className={styles.advertPrice}>{advert.price} €</p>
+              <p className={styles.advertDetails}>{advert.sale ? "For Sale" : "Looking to Buy"}</p>
+              <p className={styles.advertDetails}>Tags: {advert.tags.join(", ")}</p>
+              {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.advertImage} />}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 };
 
 export default AdvertsPage;
+
 
 
