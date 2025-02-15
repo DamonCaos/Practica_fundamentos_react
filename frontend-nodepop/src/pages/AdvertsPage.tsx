@@ -35,35 +35,45 @@ const AdvertsPage = () => {
   const fetchAdverts = async () => {
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-
+  
       if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
+        addNotification("You are not authenticated. Please log in.", "error");
         setLoading(false);
         return;
       }
-
+  
       const queryParams = new URLSearchParams();
-
+  
       if (filters.name) queryParams.append("name", filters.name);
       if (filters.sale) queryParams.append("sale", filters.sale);
-      if (filters.tag) queryParams.append("tag", filters.tag);
+  
+      // 🟢 Corregir filtro de tags (el backend espera `tags`)
+      if (filters.tag) {
+        const formattedTags = filters.tag.split(",").map(tag => tag.trim()).join(",");
+        queryParams.append("tags", formattedTags);
+      }
+  
+      // 🟢 Corregir filtro de precio (`price=min-max`)
       if (filters.minPrice && filters.maxPrice) {
         queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
       }
-
+  
+      console.log("🟢 Fetching adverts with query:", queryParams.toString());
+  
       const response = await axios.get(`http://localhost:3001/api/v1/adverts?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       setAdverts(response.data);
-      addNotification("Adverts loaded successfully!", "success"); // 🟢 Notificación de éxito
+      addNotification("Adverts loaded successfully!", "success");
     } catch (err) {
       console.error("❌ Error fetching adverts:", err);
-      addNotification("Failed to load adverts.", "error"); // 🟢 Notificación de error
+      addNotification("Failed to load adverts.", "error");
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters({
