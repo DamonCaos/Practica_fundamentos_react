@@ -66,7 +66,7 @@ Nodepop es una aplicación web para comprar y vender artículos. Permite a los u
 
 ### 1️⃣ Clonar el repositorio
 ```bash
-git clone https://github.com/tu-usuario/tu-repo-nodepop.git
+git clone https://github.com/DamonCaos/Practica_fundamentos_react/tree/main/frontend-nodepop
 cd tu-repo-nodepop
 2️⃣ Instalar dependencias
 Ejecuta el siguiente comando en la raíz del proyecto:
@@ -141,7 +141,7 @@ Nodepop es una aplicación web para la gestión de anuncios de compra y venta, d
 
 ### **1️⃣ Clonar el repositorio**
 ```bash
-git clone https://github.com/tu-usuario/tu-repositorio.git
+git clone https://github.com/DamonCaos/Practica_fundamentos_react/tree/main/frontend-nodepop
 cd tu-repositorio
 2️⃣ Instalar dependencias
 Ejecuta:
@@ -185,7 +185,7 @@ React Router 🔀
 Axios 📡
 Node.js + Express (Backend) 🟢
 📝 Autor
-👤 Tu Nombre 📧 Contacto: tu-email@example.com
+👤 Javier Rodriguez 📧 Contacto: franciscoromera0816@gmail.com
 
 📜 Licencia
 Este proyecto está bajo la licencia MIT.
