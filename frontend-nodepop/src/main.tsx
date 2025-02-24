@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import { Provider } from "react-redux"; 
-import { store } from "./redux/store";  
+import { store } from "./Redux/store";  
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
