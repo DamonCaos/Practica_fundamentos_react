@@ -1,6 +1,5 @@
 import React from "react";
-
-//Hacemos este listado como componente que solo rendereciza el listado, para que sea más modular y reutilizable
+import { Link } from "react-router-dom";
 
 interface Advert {
   id: string;
@@ -10,7 +9,7 @@ interface Advert {
 }
 
 interface AdvertsListProps {
-  adverts: Advert[]; // 🟢 Definimos que `adverts` es un array de `Advert`
+  adverts: Advert[];
 }
 
 const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
@@ -20,7 +19,9 @@ const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
       <ul>
         {adverts.map((advert) => (
           <li key={advert.id}>
-            <h3>{advert.name}</h3>
+            <Link to={`/advert/${advert.id}`}>
+              <h3>{advert.name}</h3>
+            </Link>
             <p>Price: {advert.price} €</p>
             {advert.photo && <img src={advert.photo} alt={advert.name} width="100" />}
           </li>
