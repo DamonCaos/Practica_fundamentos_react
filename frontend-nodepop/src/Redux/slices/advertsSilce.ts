@@ -30,13 +30,33 @@ const initialState: AdvertsState = {
 
 //Acciom asincrona para obtener los anuncios de la API
 
-export const fetchAdverts = createAsyncThunk("adverts/fetchAdverts", async () => {
-    const response = await fetch("http://localhost:3001/api/v1/adverts");
-    if (!response.ok) {
-        throw new Error("Failed to fetch adverts");
+export const fetchAdverts = createAsyncThunk("adverts/fetchAdverts", async (_, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+  
+      if (!token) {
+        return rejectWithValue("No authentication token found");
+      }
+  
+      const response = await fetch("http://localhost:3001/api/v1/adverts", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`, // 🟢 Asegurar que enviamos el token
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || "Failed to fetch adverts");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      return rejectWithValue("Network error while fetching adverts");
     }
-    return await response.json();
-})
+  });
+  
 
 //Slice de anuncios
 
