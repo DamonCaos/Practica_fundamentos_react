@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/userSlice";
+import advertsReducer from "./slices//advertsSilce"
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
+        adverts: advertsReducer,
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({
@@ -13,5 +15,5 @@ export const store = configureStore({
         devTools: process.env.NODE_ENV !== 'production',
 });
 
-export type Rootstate = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispach = typeof store.dispatch;
