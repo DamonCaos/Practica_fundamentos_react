@@ -55,8 +55,42 @@ export const fetchAdverts = createAsyncThunk("adverts/fetchAdverts", async (_, {
     } catch (error) {
       return rejectWithValue("Network error while fetching adverts");
     }
+
   });
   
+
+// accion para eliminar anuncios
+
+export const deleteAdvert = createAsyncThunk(
+  "adverts/deleteAdvert",
+  async (advertId: string, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+
+      if (!token) {
+        return rejectWithValue("No authentication token found");
+      }
+
+      const response = await fetch(`http://localhost:3001/api/v1/adverts/${advertId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || "Failed to delete advert");
+      }
+
+      return advertId; 
+    } catch (error) {
+      return rejectWithValue("Network error while deleting advert");
+    }
+  }
+);
+
 
 //Slice de anuncios
 
@@ -76,6 +110,9 @@ const advertsSlice = createSlice({
         .addCase(fetchAdverts.rejected, (state, action) => {
             state.status = "failed"
             state.error = action.error.message || null;
+        })
+        .addCase(deleteAdvert.fulfilled, (state, action) => {
+            state.adverts = state.adverts.filter((advert) => advert.id !== action.payload);
         })
     }
 })

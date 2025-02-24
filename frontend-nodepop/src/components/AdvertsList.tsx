@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { deleteAdvert } from "../Redux/slices/advertsSilce";
+import { AppDispatch } from "../Redux/store";
 
 interface Advert {
   id: string;
@@ -13,6 +16,14 @@ interface AdvertsListProps {
 }
 
 const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleDelete = (advertId: string) => {
+    if (window.confirm("Are you sure you want to delete this advert?")) {
+      dispatch(deleteAdvert(advertId));
+    }
+  };
+
   return (
     <div>
       <h2>Adverts</h2>
@@ -24,6 +35,7 @@ const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
             </Link>
             <p>Price: {advert.price} €</p>
             {advert.photo && <img src={advert.photo} alt={advert.name} width="100" />}
+            <button onClick={() => handleDelete(advert.id)}>❌ Delete</button>
           </li>
         ))}
       </ul>
@@ -32,4 +44,3 @@ const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
 };
 
 export default AdvertsList;
-
