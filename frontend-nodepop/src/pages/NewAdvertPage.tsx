@@ -1,13 +1,17 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { createAdvert, selectAdvertsStatus } from "../Redux/slices/advertsSilce";
+import { AppDispatch } from "../Redux/store";
 import styles from "../styles/NewAdvertPage.module.css";
-import { useNotification } from "../context/NotificationContext"; // 🟢 Importar el contexto de notificaciones
+import { useNotification } from "../context/NotificationContext";
 
 const NewAdvertPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { addNotification } = useNotification(); // 🟢 Usar el sistema de notificaciones
-  
+  const { addNotification } = useNotification();
+  const status = useSelector(selectAdvertsStatus); // 🟢 Obtener estado de carga desde Redux
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -15,8 +19,6 @@ const NewAdvertPage = () => {
     tags: "",
     photo: "",
   });
-
-  const [loading, setLoading] = useState(false); // 🟢 Estado para indicar si está cargando
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -27,43 +29,26 @@ const NewAdvertPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // 🟢 Activar el estado de carga
-
+  
+    const newAdvert = {
+      name: formData.name,
+      price: Number(formData.price),
+      sale: formData.sale === "true",
+      tags: formData.tags.split(",").map((tag) => tag.trim()),
+      photo: formData.photo.trim() !== "" ? formData.photo : undefined,
+    };
+  
     try {
-      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-
-      if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
-        setLoading(false);
-        return;
-      }
-
-      const advertData: any = {
-        name: formData.name,
-        price: Number(formData.price),
-        sale: formData.sale === "true",
-        tags: formData.tags.split(",").map((tag) => tag.trim()),
-      };
-
-      if (formData.photo.trim() !== "") {
-        advertData.photo = formData.photo;
-      }
-
-      console.log("📤 Creating advert:", advertData);
-
-      await axios.post("http://localhost:3001/api/v1/adverts", advertData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      addNotification("Advert created successfully!", "success"); // 🟢 Notificación de éxito
+      await dispatch(createAdvert(newAdvert)).unwrap();
+      addNotification("Advert created successfully!", "success");
       navigate("/adverts");
-    } catch (err: any) {
-      console.error("❌ Error creating advert:", err.response?.data || err.message);
-      addNotification(err.response?.data?.message || "Could not create advert.", "error"); // 🟢 Notificación de error
-    } finally {
-      setLoading(false); // 🟢 Desactivar estado de carga
+    } catch (err) {
+      console.error("❌ Error creating advert:", err);
+      const errorMessage = typeof err === "string" ? err : (err as any)?.message || "Could not create advert.";
+      addNotification(errorMessage, "error"); 
     }
   };
+  
 
   return (
     <div className={styles.container}>
@@ -77,9 +62,9 @@ const NewAdvertPage = () => {
         </select>
         <input type="text" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} className={styles.input} />
         <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} className={styles.input} />
-        
-        <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={loading}>
-          {loading ? "Creating..." : "Create"}
+
+        <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={status === "loading"}>
+          {status === "loading" ? "Creating..." : "Create"}
         </button>
       </form>
     </div>
@@ -87,4 +72,3 @@ const NewAdvertPage = () => {
 };
 
 export default NewAdvertPage;
-

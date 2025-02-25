@@ -91,6 +91,42 @@ export const deleteAdvert = createAsyncThunk(
   }
 );
 
+// Accion para crear anuncio nuevo
+
+export const createAdvert = createAsyncThunk(
+    "adverts/createAdvert",
+    async (
+      newAdvert: { name: string; price: number; sale: boolean; tags: string[]; photo?: string },
+      { rejectWithValue }
+    ) => {
+      try {
+        const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+  
+        if (!token) {
+          return rejectWithValue("No auth token found");
+        }
+  
+        const response = await fetch("http://localhost:3001/api/v1/adverts", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json", 
+          },
+          body: JSON.stringify(newAdvert),
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          return rejectWithValue(errorData.message || "Failed to create advert");
+        }
+  
+        return await response.json();
+      } catch (error) {
+        return rejectWithValue("Network error");
+      }
+    }
+  );
+  
 
 //Slice de anuncios
 
@@ -114,6 +150,9 @@ const advertsSlice = createSlice({
         .addCase(deleteAdvert.fulfilled, (state, action) => {
             state.adverts = state.adverts.filter((advert) => advert.id !== action.payload);
         })
+        .addCase(createAdvert.fulfilled, (state, action) => {
+            state.adverts.push(action.payload);
+        });
     }
 })
 
