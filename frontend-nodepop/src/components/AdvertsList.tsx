@@ -1,28 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { deleteAdvert } from "../Redux/slices/advertsSilce";
-import { AppDispatch } from "../Redux/store";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { deleteAdvert } from '../Redux/slices/advertsSlice'
+import { AppDispatch } from '../Redux/store'
 
 interface Advert {
-  id: string;
-  name: string;
-  price: number;
-  photo?: string;
+  id: string
+  name: string
+  price: number
+  photo?: string
 }
 
 interface AdvertsListProps {
-  adverts: Advert[];
+  adverts: Advert[]
 }
 
 const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>()
 
   const handleDelete = (advertId: string) => {
-    if (window.confirm("Are you sure you want to delete this advert?")) {
-      dispatch(deleteAdvert(advertId));
+    if (window.confirm('Are you sure you want to delete this advert?')) {
+      dispatch(deleteAdvert(advertId))
     }
-  };
+  }
 
   return (
     <div>
@@ -40,7 +40,7 @@ const AdvertsList: React.FC<AdvertsListProps> = ({ adverts }) => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default AdvertsList;
+export default AdvertsList
