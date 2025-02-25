@@ -63,6 +63,37 @@ export const fetchAdverts = createAsyncThunk(
   }
 );
 
+// 📌 Acción asíncrona para eliminar un anuncio
+export const deleteAdvert = createAsyncThunk(
+  "adverts/deleteAdvert",
+  async (advertId: string, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+
+      if (!token) {
+        return rejectWithValue("No authentication token found");
+      }
+
+      const response = await fetch(`http://localhost:3001/api/v1/adverts/${advertId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || "Failed to delete advert");
+      }
+
+      return advertId; // ✅ Retorna el `id` del anuncio eliminado
+    } catch (error) {
+      return rejectWithValue("Network error while deleting advert");
+    }
+  }
+);
+
 // 📌 Slice de anuncios
 const advertsSlice = createSlice({
   name: "adverts",
@@ -81,11 +112,20 @@ const advertsSlice = createSlice({
       .addCase(fetchAdverts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string || "Unknown error"; // ✅ Se asegura que el error sea un string
+      })
+
+      // Eliminar anuncio
+      .addCase(deleteAdvert.fulfilled, (state, action) => {
+        state.adverts = state.adverts.filter((advert) => advert.id !== action.payload);
       });
   },
 });
 
+
+
+// 📌 Exportar las acciones
 export default advertsSlice.reducer;
+
 
 // 📌 Selectores optimizados con reselect
 const selectAdvertsState = (state: RootState) => state.adverts;

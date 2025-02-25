@@ -40,8 +40,6 @@ const AdvertsPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 🟢 Construir la URL con los filtros aplicados
     const queryParams = new URLSearchParams();
 
     if (filters.name) queryParams.append("name", filters.name);
@@ -50,9 +48,6 @@ const AdvertsPage = () => {
     if (filters.sale) queryParams.append("sale", filters.sale);
     if (filters.tag) queryParams.append("tags", filters.tag);
 
-    console.log("🟢 Fetching adverts with filters:", queryParams.toString());
-
-    // 🟢 Modificamos Redux para aceptar los filtros como argumento
     dispatch(fetchAdverts(queryParams.toString()));
   };
 
@@ -66,59 +61,37 @@ const AdvertsPage = () => {
 
       {/* Formulario de filtros */}
       <form onSubmit={handleSubmit} className={styles.filterForm}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Search by name"
-          value={filters.name}
-          onChange={handleFilterChange}
-          className={styles.filterInput}
-        />
-        <input
-          type="number"
-          name="minPrice"
-          placeholder="Min price"
-          value={filters.minPrice}
-          onChange={handleFilterChange}
-          className={styles.filterInput}
-        />
-        <input
-          type="number"
-          name="maxPrice"
-          placeholder="Max price"
-          value={filters.maxPrice}
-          onChange={handleFilterChange}
-          className={styles.filterInput}
-        />
-        <select
-          name="sale"
-          value={filters.sale}
-          onChange={handleFilterChange}
-          className={styles.filterSelect}
-        >
+        <input type="text" name="name" placeholder="Search by name" value={filters.name} onChange={handleFilterChange} className={styles.filterInput} />
+        <input type="number" name="minPrice" placeholder="Min price" value={filters.minPrice} onChange={handleFilterChange} className={styles.filterInput} />
+        <input type="number" name="maxPrice" placeholder="Max price" value={filters.maxPrice} onChange={handleFilterChange} className={styles.filterInput} />
+        <select name="sale" value={filters.sale} onChange={handleFilterChange} className={styles.filterSelect}>
           <option value="">All</option>
           <option value="true">Sell</option>
           <option value="false">Buy</option>
         </select>
-        <input
-          type="text"
-          name="tag"
-          placeholder="Sort by tag"
-          value={filters.tag}
-          onChange={handleFilterChange}
-          className={styles.filterInput}
-        />
-        <button type="submit" className={styles.filterButton}>
-          Sort
-        </button>
+        <input type="text" name="tag" placeholder="Sort by tag" value={filters.tag} onChange={handleFilterChange} className={styles.filterInput} />
+        <button type="submit" className={styles.filterButton}>Sort</button>
       </form>
 
-      {/* Muestra los anuncios usando AdvertsList */}
-      {status === "loading" && <p>Loading adverts...</p>}
-      {error && <p>Error: {error}</p>}
-      <AdvertsList adverts={adverts} />
+      {/* ✅ Mostrar mensaje de carga cuando status === "loading" */}
+      {status === "loading" ? (
+        <p data-testid="loading-message">Loading adverts...</p>
+      ) : (
+        <>
+          {/* ✅ Mostrar mensaje de error cuando status === "failed" */}
+          {status === "failed" && <p data-testid="error-message">Error: {error}</p>}
+
+          {/* ✅ Renderizar lista de anuncios solo si el estado no es "loading" */}
+          <AdvertsList adverts={adverts} />
+        </>
+      )}
     </div>
   );
 };
 
 export default AdvertsPage;
+
+
+
+
+
