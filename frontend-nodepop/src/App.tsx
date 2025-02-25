@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import AdvertsPage from "./pages/AdvertsPage";
 import DetailAdvertPage from "./pages/DetailAdvertPage";
 import NewAdvertPage from "./pages/NewAdvertPage";
-import EditAdvertPage from "./pages/EditAdvertPage"; // ¡Importamos la página de edición!
+import EditAdvertPage from "./pages/EditAdvertPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { useAuth } from "./context/AuthContext";
 
@@ -17,6 +17,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 function App() {
   return (
     <Routes>
+      {/* Página de Inicio */}
       <Route
         path="/"
         element={
@@ -25,6 +26,8 @@ function App() {
           </MainLayout>
         }
       />
+
+      {/* Página de Login */}
       <Route
         path="/login"
         element={
@@ -33,6 +36,8 @@ function App() {
           </MainLayout>
         }
       />
+
+      {/* Listado de Anuncios (Requiere Autenticación) */}
       <Route
         path="/adverts"
         element={
@@ -43,6 +48,8 @@ function App() {
           </PrivateRoute>
         }
       />
+
+      {/* Crear Nuevo Anuncio (Requiere Autenticación) */}
       <Route
         path="/advert/new"
         element={
@@ -53,6 +60,8 @@ function App() {
           </PrivateRoute>
         }
       />
+
+      {/* Detalle de Anuncio (Requiere Autenticación) */}
       <Route
         path="/advert/:id"
         element={
@@ -63,6 +72,8 @@ function App() {
           </PrivateRoute>
         }
       />
+
+      {/* Editar Anuncio (Requiere Autenticación) */}
       <Route
         path="/advert/:id/edit"
         element={
@@ -73,6 +84,8 @@ function App() {
           </PrivateRoute>
         }
       />
+
+      {/* Página 404 */}
       <Route
         path="*"
         element={
@@ -86,7 +99,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
