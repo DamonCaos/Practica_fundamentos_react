@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/DetailAdvertPage.module.css";
 import { useNotification } from "../context/NotificationContext";
@@ -89,12 +89,8 @@ const DetailAdvertPage = () => {
       <p className={styles.tags}>Tags: {advert.tags.join(", ")}</p>
       {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.image} />}
 
-      {/* ✅ Botones de Editar y Eliminar */}
+      {/* ✅ Botón de eliminar con modal de confirmación */}
       <div className={styles.buttonContainer}>
-        <Link to={`/adverts/${id}/edit`} className={styles.editButton}>
-          Edit Advert
-        </Link>
-
         <button onClick={() => setIsModalOpen(true)} className={styles.deleteButton}>
           Delete Advert
         </button>
