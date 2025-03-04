@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, setShowLogoutModal } = useAuth();
 
   return (
     <nav className={styles.navbar}>
@@ -14,7 +14,9 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <Link to="/advert/new" className={styles.link}>Create Advert</Link>
-            <button onClick={logout} className={`${styles.link} ${styles.logout}`}>Logout</button>
+            <button onClick={() => setShowLogoutModal(true)} className={`${styles.link} ${styles.logout}`}>
+              Logout
+            </button>
           </>
         ) : (
           <Link to="/login" className={styles.link}>Login</Link>
