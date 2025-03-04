@@ -1,53 +1,45 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNotification } from "./NotificationContext"; 
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string, remember: boolean) => void;
   logout: () => void;
-  showLogoutModal: boolean;
-  setShowLogoutModal: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false); // ✅ Estado del modal
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem("rememberMe") === "true";
+  });
+
   const navigate = useNavigate();
-  const { addNotification } = useNotification(); // ✅ Usamos el sistema de notificaciones
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-    setIsAuthenticated(!!token);
+    if (localStorage.getItem("rememberMe") === "true") {
+      setIsAuthenticated(true);
+    }
   }, []);
 
   const login = (token: string, remember: boolean) => {
     if (remember) {
-      localStorage.setItem("authToken", token);
+      localStorage.setItem("rememberMe", "true");
     } else {
-      sessionStorage.setItem("authToken", token);
+      localStorage.removeItem("rememberMe");
     }
     setIsAuthenticated(true);
-    navigate("/"); // ✅ Redirigir a la home después del login
+    navigate("/"); // Redirigir a la home tras iniciar sesión
   };
 
   const logout = () => {
     console.log("🔴 Logging out...");
-    localStorage.removeItem("authToken");
-    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("rememberMe");
     setIsAuthenticated(false);
-    setShowLogoutModal(false); // ✅ Cerrar el modal automáticamente
-    addNotification("Logout successful!", "success"); // ✅ Mensaje de éxito
-    navigate("/"); // ✅ Redirigir a la home después del logout
+    navigate("/"); // Redirigir tras logout
   };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, showLogoutModal, setShowLogoutModal }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

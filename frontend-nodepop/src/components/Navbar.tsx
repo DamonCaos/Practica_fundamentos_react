@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import LogoutModal from "./LogoutModal"; // ✅ Modal solo se usa aquí
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const { isAuthenticated, setShowLogoutModal } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <nav className={styles.navbar}>
@@ -14,7 +17,10 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <Link to="/advert/new" className={styles.link}>Create Advert</Link>
-            <button onClick={() => setShowLogoutModal(true)} className={`${styles.link} ${styles.logout}`}>
+            <button 
+              onClick={() => setShowLogoutModal(true)} 
+              className={`${styles.link} ${styles.logout}`}
+            >
               Logout
             </button>
           </>
@@ -22,6 +28,9 @@ const Navbar = () => {
           <Link to="/login" className={styles.link}>Login</Link>
         )}
       </div>
+
+      {/* ✅ El modal solo se muestra si `showLogoutModal` es true */}
+      {showLogoutModal && <LogoutModal onClose={() => setShowLogoutModal(false)} />}
     </nav>
   );
 };

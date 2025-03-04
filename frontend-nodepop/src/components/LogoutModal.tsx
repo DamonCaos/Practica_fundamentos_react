@@ -1,23 +1,27 @@
 import { useAuth } from "../context/AuthContext";
 import styles from "./LogoutModal.module.css";
 
-const LogoutModal = () => {
-  const { showLogoutModal, setShowLogoutModal, logout } = useAuth();
+interface LogoutModalProps {
+  onClose: () => void;
+}
 
-  if (!showLogoutModal) return null;
+const LogoutModal = ({ onClose }: LogoutModalProps) => {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    onClose(); // ✅ Cerrar modal primero
+    setTimeout(() => {
+      logout(); // ✅ Logout con delay para mejor UX
+    }, 300);
+  };
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h3>Confirm Logout</h3>
-        <p>Are you sure you want to log out?</p>
-        <div className={styles.modalButtons}>
-          <button onClick={logout} className={styles.confirmButton}>
-            Yes, Logout
-          </button>
-          <button onClick={() => setShowLogoutModal(false)} className={styles.cancelButton}>
-            Cancel
-          </button>
+        <h3>Are you sure you want to logout?</h3>
+        <div className={styles.buttonContainer}>
+          <button onClick={handleLogout} className={styles.confirmButton}>Logout</button>
+          <button onClick={onClose} className={styles.cancelButton}>Cancel</button>
         </div>
       </div>
     </div>
