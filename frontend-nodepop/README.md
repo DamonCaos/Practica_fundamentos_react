@@ -189,3 +189,40 @@ Node.js + Express (Backend) 🟢
 
 📜 Licencia
 Este proyecto está bajo la licencia MIT.
+
+📝 Correcciones realizadas en esta versión
+Esta versión incluye las siguientes mejoras y correcciones en base al feedback recibido:
+
+✅ Corrección de navegación:
+
+Se reemplazaron los botones con navigate innecesarios por Link de React Router.
+✅ Corrección del sistema de Remember Me:
+
+Ahora solo guarda la sesión en localStorage o sessionStorage si el checkbox está activado.
+✅ Confirmación de logout:
+
+Se implementó un modal de confirmación en lugar de window.confirm.
+✅ Anidación de rutas en /adverts:
+
+Se agruparon las rutas dentro de /adverts, evitando recargar el layout innecesariamente.
+✅ Manejo de errores y redirección a NotFoundPage:
+
+Ahora si un anuncio no existe, el usuario es redirigido a la página de 404 Not Found.
+✅ Refactorización de URLs del backend:
+
+Se eliminaron las URLs hardcodeadas y se centralizaron en config.ts.
+✅ Corrección de la navegación tras la creación de un anuncio:
+
+Ahora, al crear un anuncio, el usuario es redirigido al detalle del anuncio creado en vez del listado.
+✅ Carga dinámica de tags desde la API:
+
+Se implementó la carga de tags en la página de creación de anuncios para que el usuario pueda elegirlos correctamente.
+✅ Eliminación de EditAdvertPage:
+
+Se eliminó la funcionalidad de edición de anuncios, ya que no se requería en la práctica.
+✅ Eliminación de any en TypeScript:
+
+Se reemplazó any por tipos más específicos y se mejoró el manejo de errores en las peticiones HTTP.
+✅ Reorganización de archivos:
+
+Se movieron los archivos de estilos (.module.css) junto a cada componente correspondiente.
