@@ -2,12 +2,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/NewAdvertPage.module.css";
-import { useNotification } from "../context/NotificationContext"; // 🟢 Importar el contexto de notificaciones
+import { useNotification } from "../context/NotificationContext";
 
 const NewAdvertPage = () => {
   const navigate = useNavigate();
-  const { addNotification } = useNotification(); // 🟢 Usar el sistema de notificaciones
-  
+  const { addNotification } = useNotification();
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -16,7 +16,7 @@ const NewAdvertPage = () => {
     photo: "",
   });
 
-  const [loading, setLoading] = useState(false); // 🟢 Estado para indicar si está cargando
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -27,13 +27,13 @@ const NewAdvertPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // 🟢 Activar el estado de carga
+    setLoading(true);
 
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
       if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
+        addNotification("You are not authenticated. Please log in.", "error");
         setLoading(false);
         return;
       }
@@ -51,17 +51,25 @@ const NewAdvertPage = () => {
 
       console.log("📤 Creating advert:", advertData);
 
-      await axios.post("http://localhost:3001/api/v1/adverts", advertData, {
+      const response = await axios.post("http://localhost:3001/api/v1/adverts", advertData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      addNotification("Advert created successfully!", "success"); // 🟢 Notificación de éxito
-      navigate("/adverts");
+      const newAdvertId = response.data.id; // Obtener ID del anuncio creado
+
+      addNotification("Advert created successfully!", "success");
+
+      // 🔄 Ahora navegamos al detalle del nuevo anuncio en vez de la lista
+      if (newAdvertId) {
+        navigate(`/advert/${newAdvertId}`);
+      } else {
+        navigate("/adverts");
+      }
     } catch (err: any) {
       console.error("❌ Error creating advert:", err.response?.data || err.message);
-      addNotification(err.response?.data?.message || "Could not create advert.", "error"); // 🟢 Notificación de error
+      addNotification(err.response?.data?.message || "Could not create advert.", "error");
     } finally {
-      setLoading(false); // 🟢 Desactivar estado de carga
+      setLoading(false);
     }
   };
 
@@ -77,7 +85,7 @@ const NewAdvertPage = () => {
         </select>
         <input type="text" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} className={styles.input} />
         <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} className={styles.input} />
-        
+
         <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={loading}>
           {loading ? "Creating..." : "Create"}
         </button>
@@ -87,4 +95,3 @@ const NewAdvertPage = () => {
 };
 
 export default NewAdvertPage;
-

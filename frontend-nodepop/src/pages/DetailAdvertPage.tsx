@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/DetailAdvertPage.module.css";
-import { useNotification } from "../context/NotificationContext"; // 🟢 Importamos el sistema de notificaciones
+import { useNotification } from "../context/NotificationContext"; // 🟢 Usamos el sistema de notificaciones
 
 interface Advert {
   id: string;
@@ -16,7 +16,7 @@ interface Advert {
 const DetailAdvertPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addNotification } = useNotification(); // 🟢 Usamos el sistema de notificaciones
+  const { addNotification } = useNotification(); 
 
   const [advert, setAdvert] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ const DetailAdvertPage = () => {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
       if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
+        addNotification("You are not authenticated. Please log in.", "error");
         setLoading(false);
         return;
       }
@@ -41,10 +41,10 @@ const DetailAdvertPage = () => {
       });
 
       setAdvert(response.data);
-      addNotification("Advert loaded successfully.", "success"); // 🟢 Notificación de éxito
+      addNotification("Advert loaded successfully.", "success");
     } catch (err) {
       console.error("❌ Error fetching advert:", err);
-      addNotification("Failed to load advert.", "error"); // 🟢 Notificación de error
+      addNotification("Failed to load advert.", "error");
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ const DetailAdvertPage = () => {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
       if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error"); // 🟢 Notificación de error
+        addNotification("You are not authenticated. Please log in.", "error");
         return;
       }
 
@@ -63,11 +63,11 @@ const DetailAdvertPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      addNotification("Advert deleted successfully!", "success"); // 🟢 Notificación de éxito
+      addNotification("Advert deleted successfully!", "success");
       navigate("/adverts");
     } catch (err) {
       console.error("❌ Error deleting advert:", err);
-      addNotification("Failed to delete advert.", "error"); // 🟢 Notificación de error
+      addNotification("Failed to delete advert.", "error");
     }
   };
 
@@ -87,16 +87,15 @@ const DetailAdvertPage = () => {
           Go Back
         </button>
 
-        <button onClick={() => navigate(`/advert/${id}/edit`)} className={styles.editButton}>
+        <Link to={`/advert/${id}/edit`} className={styles.editButton}>
           Edit Advert
-        </button>
+        </Link>
 
         <button onClick={() => setIsModalOpen(true)} className={styles.deleteButton}>
           Delete Advert
         </button>
       </div>
 
-      {/* Confirmation Modal */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
@@ -117,8 +116,3 @@ const DetailAdvertPage = () => {
 };
 
 export default DetailAdvertPage;
-
-
-
-
-

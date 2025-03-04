@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import styles from "../styles/HomePage.module.css";
 
 const HomePage = () => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -15,43 +14,28 @@ const HomePage = () => {
 
       <div className={styles.buttonContainer}>
         {!isAuthenticated && (
-          <button
-            className={`${styles.button} ${styles.loginButton}`}
-            onClick={() => navigate("/login")}
-          >
+          <Link to="/login" className={`${styles.button} ${styles.loginButton}`}>
             Login
-          </button>
+          </Link>
         )}
 
         {isAuthenticated ? (
           <>
-            <button
-              className={`${styles.button} ${styles.viewButton}`}
-              onClick={() => navigate("/adverts")}
-            >
+            <Link to="/adverts" className={`${styles.button} ${styles.viewButton}`}>
               View Adverts
-            </button>
-            <button
-              className={`${styles.button} ${styles.createButton}`}
-              onClick={() => navigate("/advert/new")}
-            >
+            </Link>
+            <Link to="/advert/new" className={`${styles.button} ${styles.createButton}`}>
               Create Advert
-            </button>
+            </Link>
           </>
         ) : (
           <>
-            <button
-              className={`${styles.button} ${styles.viewButton}`}
-              onClick={() => navigate("/login")}
-            >
+            <Link to="/login" className={`${styles.button} ${styles.viewButton}`}>
               View Adverts
-            </button>
-            <button
-              className={`${styles.button} ${styles.createButton}`}
-              onClick={() => navigate("/login")}
-            >
+            </Link>
+            <Link to="/login" className={`${styles.button} ${styles.createButton}`}>
               Create Advert
-            </button>
+            </Link>
           </>
         )}
       </div>
@@ -60,6 +44,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-
