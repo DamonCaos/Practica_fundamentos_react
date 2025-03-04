@@ -1,7 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import {API_BASE_URL} from "../config"; // ✅ Importamos la URL base del backend
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -20,7 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(!!token);
   }, []);
 
-  const login = async (token: string, remember: boolean) => {
+  const login = (token: string, remember: boolean) => {
     if (remember) {
       localStorage.setItem("authToken", token);
     } else {
@@ -31,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    console.log("🔴 Logging out...");
     localStorage.removeItem("authToken");
     sessionStorage.removeItem("authToken");
     setIsAuthenticated(false);

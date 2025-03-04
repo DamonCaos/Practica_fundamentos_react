@@ -1,53 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/NewAdvertPage.module.css";
 import { useNotification } from "../context/NotificationContext";
-import { API_ENDPOINTS } from "../config"; // ✅ Importamos las rutas centralizadas
+import { API_ENDPOINTS } from "../config";
+
+// Definimos el tipo de los datos del formulario
+interface AdvertFormData {
+  name: string;
+  price: string;
+  sale: "true" | "false";
+  tags: string;
+  photo?: string;
+}
 
 const NewAdvertPage = () => {
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AdvertFormData>({
     name: "",
     price: "",
     sale: "true",
-    tags: [] as string[], // Ahora es un array de strings
+    tags: "",
     photo: "",
   });
 
   const [loading, setLoading] = useState(false);
-
-  // ✅ Cargar tags desde la API al montar el componente
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const response = await axios.get(API_ENDPOINTS.tags); // ✅ Usamos la URL centralizada
-        setAvailableTags(response.data);
-      } catch (err) {
-        console.error("❌ Error fetching tags:", err);
-        addNotification("Failed to load tags.", "error");
-      }
-    };
-
-    fetchTags();
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-  };
-
-  // ✅ Manejador para los checkboxes de tags
-  const handleTagChange = (tag: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.includes(tag) ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag],
-    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,8 +52,8 @@ const NewAdvertPage = () => {
         name: formData.name,
         price: Number(formData.price),
         sale: formData.sale === "true",
-        tags: formData.tags,
-        photo: formData.photo.trim() || undefined,
+        tags: formData.tags.split(",").map((tag) => tag.trim()),
+        photo: formData.photo?.trim() || undefined, // Evita enviar `null`
       };
 
       console.log("📤 Creating advert:", advertData);
@@ -80,9 +65,9 @@ const NewAdvertPage = () => {
       const newAdvertId = response.data.id;
       addNotification("Advert created successfully!", "success");
       navigate(`/adverts/${newAdvertId}`);
-    } catch (err: any) {
-      console.error("❌ Error creating advert:", err.response?.data || err.message);
-      addNotification(err.response?.data?.message || "Could not create advert.", "error");
+    } catch (err: unknown) {
+      console.error("❌ Error creating advert:", err);
+      addNotification("Could not create advert.", "error");
     } finally {
       setLoading(false);
     }
@@ -98,27 +83,7 @@ const NewAdvertPage = () => {
           <option value="true">Sell</option>
           <option value="false">Buy</option>
         </select>
-
-        {/* ✅ Checkboxes para los tags */}
-        <div className={styles.tagsContainer}>
-          <p>Tags:</p>
-          {availableTags.length > 0 ? (
-            availableTags.map((tag) => (
-              <label key={tag} className={styles.tagLabel}>
-                <input
-                  type="checkbox"
-                  value={tag}
-                  checked={formData.tags.includes(tag)}
-                  onChange={() => handleTagChange(tag)}
-                />
-                {tag}
-              </label>
-            ))
-          ) : (
-            <p>Loading tags...</p>
-          )}
-        </div>
-
+        <input type="text" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} className={styles.input} />
         <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} className={styles.input} />
 
         <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={loading}>

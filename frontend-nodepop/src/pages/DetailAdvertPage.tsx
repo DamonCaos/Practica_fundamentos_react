@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/DetailAdvertPage.module.css";
 import { useNotification } from "../context/NotificationContext";
+import { API_ENDPOINTS } from "../config";
 
 interface Advert {
   id: string;
@@ -20,7 +21,7 @@ const DetailAdvertPage = () => {
 
   const [advert, setAdvert] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para modal de confirmación
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchAdvert();
@@ -38,17 +39,18 @@ const DetailAdvertPage = () => {
 
       console.log("🔎 Fetching advert with ID:", id);
 
-      const response = await axios.get(`http://localhost:3001/api/v1/adverts/${id}`, {
+      const response = await axios.get(`${API_ENDPOINTS.adverts}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setAdvert(response.data);
       addNotification("Advert loaded successfully.", "success");
-    } catch (err: any) {
-      console.error("❌ Error fetching advert:", err.response?.data || err.message);
+    } catch (err: unknown) {
+      console.error("❌ Error fetching advert:", err);
       addNotification("Failed to load advert.", "error");
 
-      if (err.response?.status === 404) {
+      // 🔹 Si el error es un AxiosError, revisamos el status
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
         navigate("/notfound");
       }
     } finally {
@@ -66,13 +68,13 @@ const DetailAdvertPage = () => {
         return;
       }
 
-      await axios.delete(`http://localhost:3001/api/v1/adverts/${id}`, {
+      await axios.delete(`${API_ENDPOINTS.adverts}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       addNotification("Advert deleted successfully!", "success");
-      navigate("/adverts"); // Redirigir al listado tras eliminar
-    } catch (err) {
+      navigate("/adverts");
+    } catch (err: unknown) {
       console.error("❌ Error deleting advert:", err);
       addNotification("Failed to delete advert.", "error");
     }
