@@ -38,7 +38,7 @@ const NewAdvertPage = () => {
         return;
       }
 
-      const advertData: any = {
+      const advertData = {
         name: formData.name,
         price: Number(formData.price),
         sale: formData.sale === "true",
@@ -55,16 +55,13 @@ const NewAdvertPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const newAdvertId = response.data.id; // Obtener ID del anuncio creado
+      const newAdvertId = response.data.id;
 
       addNotification("Advert created successfully!", "success");
 
-      // 🔄 Ahora navegamos al detalle del nuevo anuncio en vez de la lista
-      if (newAdvertId) {
-        navigate(`/advert/${newAdvertId}`);
-      } else {
-        navigate("/adverts");
-      }
+      // ✅ 🔄 Ahora la redirección es correcta
+      navigate(`/adverts/${newAdvertId}`);
+
     } catch (err: any) {
       console.error("❌ Error creating advert:", err.response?.data || err.message);
       addNotification(err.response?.data?.message || "Could not create advert.", "error");

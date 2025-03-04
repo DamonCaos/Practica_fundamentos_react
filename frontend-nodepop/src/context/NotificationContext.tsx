@@ -6,7 +6,7 @@ type NotificationType = "success" | "error" | "info";
 
 //  Estructura de una notificación
 interface Notification {
-  id: number;
+  id: string; // ✅ Usaremos UUID en lugar de `Date.now()`
   message: string;
   type: NotificationType;
 }
@@ -24,7 +24,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   // Función para agregar una notificación
   const addNotification = (message: string, type: NotificationType) => {
-    const id = Date.now();
+    const id = crypto.randomUUID(); // ✅ Genera un UUID único en lugar de `Date.now()`
     setNotifications((prev) => [...prev, { id, message, type }]);
 
     // Eliminar automáticamente después de 3 segundos

@@ -16,7 +16,7 @@ const Navbar = () => {
 
         {isAuthenticated ? (
           <>
-            <Link to="/advert/new" className={styles.link}>Create Advert</Link>
+            <Link to="/adverts/new" className={styles.link}>Create Advert</Link>
             <button 
               onClick={() => setShowLogoutModal(true)} 
               className={`${styles.link} ${styles.logout}`}

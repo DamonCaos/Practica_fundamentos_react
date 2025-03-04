@@ -89,7 +89,7 @@ const AdvertsPage = () => {
 
   return (
     <div className={styles.advertsContainer}>
-      <Link to="/advert/new">
+      <Link to="/adverts/new">
         <button className={styles.createButton}>Create Advert</button>
       </Link>
 
@@ -146,7 +146,7 @@ const AdvertsPage = () => {
         ) : (
           adverts.map((advert) => (
             <div key={advert.id} className={styles.advertCard}>
-              <Link to={`/advert/${advert.id}`} className={styles.advertTitle}>
+              <Link to={`/adverts/${advert.id}`} className={styles.advertTitle}>
                 <h3>{advert.name}</h3>
               </Link>
               <p className={styles.advertPrice}>{advert.price} €</p>

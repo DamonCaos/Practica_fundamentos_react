@@ -10,33 +10,30 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem("rememberMe") === "true";
-  });
-
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    if (localStorage.getItem("rememberMe") === "true") {
-      setIsAuthenticated(true);
-    }
+    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+    setIsAuthenticated(!!token);
   }, []);
 
   const login = (token: string, remember: boolean) => {
     if (remember) {
-      localStorage.setItem("rememberMe", "true");
+      localStorage.setItem("authToken", token);
     } else {
-      localStorage.removeItem("rememberMe");
+      sessionStorage.setItem("authToken", token);
     }
     setIsAuthenticated(true);
-    navigate("/"); // Redirigir a la home tras iniciar sesión
+    navigate("/adverts"); // ✅ Ahora redirige correctamente tras el login
   };
 
   const logout = () => {
     console.log("🔴 Logging out...");
-    localStorage.removeItem("rememberMe");
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
     setIsAuthenticated(false);
-    navigate("/"); // Redirigir tras logout
+    navigate("/login"); // ✅ Redirige a login tras logout
   };
 
   return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;

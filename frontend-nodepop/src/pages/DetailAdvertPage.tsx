@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/DetailAdvertPage.module.css";
-import { useNotification } from "../context/NotificationContext"; // 🟢 Usamos el sistema de notificaciones
+import { useNotification } from "../context/NotificationContext";
 
 interface Advert {
   id: string;
@@ -16,11 +16,11 @@ interface Advert {
 const DetailAdvertPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addNotification } = useNotification(); 
+  const { addNotification } = useNotification();
 
   const [advert, setAdvert] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para modal de confirmación
 
   useEffect(() => {
     fetchAdvert();
@@ -36,20 +36,27 @@ const DetailAdvertPage = () => {
         return;
       }
 
+      console.log("🔎 Fetching advert with ID:", id);
+
       const response = await axios.get(`http://localhost:3001/api/v1/adverts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setAdvert(response.data);
       addNotification("Advert loaded successfully.", "success");
-    } catch (err) {
-      console.error("❌ Error fetching advert:", err);
+    } catch (err: any) {
+      console.error("❌ Error fetching advert:", err.response?.data || err.message);
       addNotification("Failed to load advert.", "error");
+
+      if (err.response?.status === 404) {
+        navigate("/notfound");
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Función para eliminar anuncio con confirmación
   const handleDelete = async () => {
     try {
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
@@ -64,7 +71,7 @@ const DetailAdvertPage = () => {
       });
 
       addNotification("Advert deleted successfully!", "success");
-      navigate("/adverts");
+      navigate("/adverts"); // Redirigir al listado tras eliminar
     } catch (err) {
       console.error("❌ Error deleting advert:", err);
       addNotification("Failed to delete advert.", "error");
@@ -82,12 +89,9 @@ const DetailAdvertPage = () => {
       <p className={styles.tags}>Tags: {advert.tags.join(", ")}</p>
       {advert.photo && <img src={advert.photo} alt={advert.name} className={styles.image} />}
 
+      {/* ✅ Botones de Editar y Eliminar */}
       <div className={styles.buttonContainer}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
-          Go Back
-        </button>
-
-        <Link to={`/advert/${id}/edit`} className={styles.editButton}>
+        <Link to={`/adverts/${id}/edit`} className={styles.editButton}>
           Edit Advert
         </Link>
 
@@ -96,6 +100,7 @@ const DetailAdvertPage = () => {
         </button>
       </div>
 
+      {/* ✅ Modal de Confirmación para eliminar */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>

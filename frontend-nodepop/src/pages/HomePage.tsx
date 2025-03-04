@@ -24,7 +24,7 @@ const HomePage = () => {
             <Link to="/adverts" className={`${styles.button} ${styles.viewButton}`}>
               View Adverts
             </Link>
-            <Link to="/advert/new" className={`${styles.button} ${styles.createButton}`}>
+            <Link to="/adverts/new" className={`${styles.button} ${styles.createButton}`}>
               Create Advert
             </Link>
           </>
