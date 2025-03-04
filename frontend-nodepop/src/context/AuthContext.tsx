@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import API_BASE_URL from "../config"; // ✅ Importamos la URL base del backend
+import {API_BASE_URL} from "../config"; // ✅ Importamos la URL base del backend
 
 interface AuthContextType {
   isAuthenticated: boolean;

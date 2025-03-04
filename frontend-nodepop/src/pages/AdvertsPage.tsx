@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "../styles/AdvertsPage.module.css";
 import { useNotification } from "../context/NotificationContext";
-import API_BASE_URL from "../config"; 
+import { API_ENDPOINTS } from "../config"; // ✅ Importamos correctamente los endpoints
 
 interface Advert {
   id: string;
@@ -49,7 +49,8 @@ const AdvertsPage = () => {
         queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
       }
 
-      const response = await axios.get(`${API_BASE_URL}/v1/adverts?${queryParams.toString()}`, {
+      // ✅ Usamos API_ENDPOINTS.adverts en lugar de concatenar manualmente
+      const response = await axios.get(`${API_ENDPOINTS.adverts}?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
