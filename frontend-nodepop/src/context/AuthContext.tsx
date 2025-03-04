@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import API_BASE_URL from "../config"; // ✅ Importamos la URL base del backend
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -10,30 +12,29 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     setIsAuthenticated(!!token);
   }, []);
 
-  const login = (token: string, remember: boolean) => {
+  const login = async (token: string, remember: boolean) => {
     if (remember) {
       localStorage.setItem("authToken", token);
     } else {
       sessionStorage.setItem("authToken", token);
     }
     setIsAuthenticated(true);
-    navigate("/adverts"); // ✅ Ahora redirige correctamente tras el login
+    navigate("/");
   };
 
   const logout = () => {
-    console.log("🔴 Logging out...");
     localStorage.removeItem("authToken");
     sessionStorage.removeItem("authToken");
     setIsAuthenticated(false);
-    navigate("/login"); // ✅ Redirige a login tras logout
+    navigate("/");
   };
 
   return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;

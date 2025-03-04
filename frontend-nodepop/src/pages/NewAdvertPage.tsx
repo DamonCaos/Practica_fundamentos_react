@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/NewAdvertPage.module.css";
 import { useNotification } from "../context/NotificationContext";
+import API_BASE_URL from "../config"; // ✅ Importamos la URL base
 
 const NewAdvertPage = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const NewAdvertPage = () => {
 
       console.log("📤 Creating advert:", advertData);
 
-      const response = await axios.post("http://localhost:3001/api/v1/adverts", advertData, {
+      const response = await axios.post(`${API_BASE_URL}/v1/adverts`, advertData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -59,9 +60,8 @@ const NewAdvertPage = () => {
 
       addNotification("Advert created successfully!", "success");
 
-      // ✅ 🔄 Ahora la redirección es correcta
+      // ✅ 🔄 Redirigir al detalle del anuncio recién creado
       navigate(`/adverts/${newAdvertId}`);
-
     } catch (err: any) {
       console.error("❌ Error creating advert:", err.response?.data || err.message);
       addNotification(err.response?.data?.message || "Could not create advert.", "error");
@@ -74,14 +74,44 @@ const NewAdvertPage = () => {
     <div className={styles.container}>
       <h2 className={styles.title}>New Advert</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required className={styles.input} />
-        <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleChange} required className={styles.input} />
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className={styles.input}
+        />
+        <input
+          type="number"
+          name="price"
+          placeholder="Price"
+          value={formData.price}
+          onChange={handleChange}
+          required
+          className={styles.input}
+        />
         <select name="sale" value={formData.sale} onChange={handleChange} className={styles.select}>
           <option value="true">Sell</option>
           <option value="false">Buy</option>
         </select>
-        <input type="text" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} className={styles.input} />
-        <input type="text" name="photo" placeholder="Image URL (optional)" value={formData.photo} onChange={handleChange} className={styles.input} />
+        <input
+          type="text"
+          name="tags"
+          placeholder="Tags (comma-separated)"
+          value={formData.tags}
+          onChange={handleChange}
+          className={styles.input}
+        />
+        <input
+          type="text"
+          name="photo"
+          placeholder="Image URL (optional)"
+          value={formData.photo}
+          onChange={handleChange}
+          className={styles.input}
+        />
 
         <button type="submit" className={`${styles.button} ${styles.createButton}`} disabled={loading}>
           {loading ? "Creating..." : "Create"}
