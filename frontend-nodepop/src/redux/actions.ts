@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config";
 import { User, Advert } from "./types";
 
@@ -19,27 +19,31 @@ export const CREATE_ADVERT_FAILURE = "CREATE_ADVERT_FAILURE";
 
 // 🔹 ACTION CREATORS
 
-
 // 🔐 LOGIN USER
 export const loginUser = (email: string, password: string) => async (dispatch: Dispatch) => {
-    dispatch({ type: LOGIN_REQUEST });
-  
-    try {
-      const response = await axios.post<{ accessToken: string; user: User }>(API_ENDPOINTS.auth.login, {
-        email,
-        password,
-      });
-  
-      const { accessToken, user } = response.data;
-  
-      sessionStorage.setItem("authToken", accessToken);
-  
-      dispatch({ type: LOGIN_SUCCESS, payload: { token: accessToken, user } });
-    } catch (error) {
-      dispatch({ type: LOGIN_FAILURE, payload: "Login failed" });
-    }
-  };
-  
+  dispatch({ type: LOGIN_REQUEST });
+
+  try {
+    const response = await axios.post<{ token: string; user: User }>(
+      API_ENDPOINTS.auth.login,
+      { email, password }
+    );
+
+    const { token, user } = response.data;
+
+    // Guardamos en sessionStorage
+    sessionStorage.setItem("authToken", token);
+
+    dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
+  } catch (error) {
+    const axiosError = error as AxiosError<{ message: string }>;
+
+    dispatch({
+      type: LOGIN_FAILURE,
+      payload: axiosError.response?.data?.message || "Login failed",
+    });
+  }
+};
 
 // 🔴 LOGOUT USER
 export const logoutUser = () => {
@@ -52,13 +56,21 @@ export const fetchAdverts = () => async (dispatch: Dispatch) => {
   dispatch({ type: FETCH_ADVERTS_REQUEST });
 
   try {
+    const token = sessionStorage.getItem("authToken");
+    if (!token) throw new Error("No authentication token found");
+
     const response = await axios.get<Advert[]>(API_ENDPOINTS.adverts, {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem("authToken")}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     dispatch({ type: FETCH_ADVERTS_SUCCESS, payload: response.data });
   } catch (error) {
-    dispatch({ type: FETCH_ADVERTS_FAILURE, payload: "Failed to fetch adverts" });
+    const axiosError = error as AxiosError<{ message: string }>;
+
+    dispatch({
+      type: FETCH_ADVERTS_FAILURE,
+      payload: axiosError.response?.data?.message || "Failed to fetch adverts",
+    });
   }
 };
 
@@ -67,12 +79,20 @@ export const createAdvert = (advertData: Advert) => async (dispatch: Dispatch) =
   dispatch({ type: CREATE_ADVERT_REQUEST });
 
   try {
+    const token = sessionStorage.getItem("authToken");
+    if (!token) throw new Error("No authentication token found");
+
     const response = await axios.post<Advert>(API_ENDPOINTS.adverts, advertData, {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem("authToken")}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     dispatch({ type: CREATE_ADVERT_SUCCESS, payload: response.data });
   } catch (error) {
-    dispatch({ type: CREATE_ADVERT_FAILURE, payload: "Failed to create advert" });
+    const axiosError = error as AxiosError<{ message: string }>;
+
+    dispatch({
+      type: CREATE_ADVERT_FAILURE,
+      payload: axiosError.response?.data?.message || "Failed to create advert",
+    });
   }
 };

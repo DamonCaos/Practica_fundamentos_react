@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import  advertsReducer  from "./advertsReducer"; // Lo crearemos luego
-import  userReducer  from "./userReducer"; // Lo crearemos luego
+import  advertsReducer  from "./advertsReducer"; 
+import  userReducer  from "./userReducer"; 
 //import { composeWithDevTools } from "redux-devtools-extension";
 
 // 🔹 Combinar los reducers (anuncios y usuario)

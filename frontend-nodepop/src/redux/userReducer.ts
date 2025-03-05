@@ -23,7 +23,7 @@ import {
         return { ...state, loading: true, error: null };
   
       case LOGIN_SUCCESS:
-        return { ...state, loading: false, isAuthenticated: true, token: action.payload };
+        return { ...state, loading: false, isAuthenticated: true, token: action.payload.token, user: action.payload.user, error: null, };
   
       case LOGIN_FAILURE:
         return { ...state, loading: false, isAuthenticated: false, error: action.payload };

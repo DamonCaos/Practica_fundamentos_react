@@ -66,8 +66,10 @@ export interface Advert {
   
   interface LoginSuccessAction {
     type: typeof LOGIN_SUCCESS;
-    payload: string; // Token de autenticación
-  }
+    payload: {
+        token: string;
+        user: User;
+    }}
   
   interface LoginFailureAction {
     type: typeof LOGIN_FAILURE;
