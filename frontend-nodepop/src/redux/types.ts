@@ -38,13 +38,13 @@ export interface Advert {
     | FetchAdvertsRequestAction
     | FetchAdvertsSuccessAction
     | FetchAdvertsFailureAction;
+  
   // 🔹 Tipo de un usuario
-    export interface User {
-        id: string;
-        email: string;
-        password: string
-        token: string;
-    }
+  export interface User {
+    id: string;
+    email: string;
+  }
+  
   // 🔹 Estado inicial del usuario en Redux
   export interface UserState {
     isAuthenticated: boolean;
@@ -67,13 +67,14 @@ export interface Advert {
   interface LoginSuccessAction {
     type: typeof LOGIN_SUCCESS;
     payload: {
-        token: string;
-        user: User;
-    }}
+      token: string;
+      user: User;
+    };
+  }
   
   interface LoginFailureAction {
     type: typeof LOGIN_FAILURE;
-    payload: string; // Mensaje de error
+    payload: string;
   }
   
   interface LogoutAction {
@@ -85,4 +86,13 @@ export interface Advert {
     | LoginSuccessAction
     | LoginFailureAction
     | LogoutAction;
+  
+  // 🔹 Tipo de estado global
+  export interface RootState {
+    user: UserState;
+    adverts: AdvertsState;
+  }
+  
+  // 🔹 Acciones combinadas en Redux
+  export type RootAction = UserActionTypes | AdvertsActionTypes;
   

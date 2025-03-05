@@ -1,17 +1,23 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { legacy_createStore as createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-import  advertsReducer  from "./advertsReducer"; 
-import  userReducer  from "./userReducer"; 
-//import { composeWithDevTools } from "redux-devtools-extension";
+import userReducer from "./userReducer";
+import advertsReducer from "./advertsReducer";
+import { RootState } from "./types";
 
-// 🔹 Combinar los reducers (anuncios y usuario)
+// 🔹 Combinamos los reducers en uno solo
 const rootReducer = combineReducers({
-  adverts: advertsReducer,
   user: userReducer,
+  adverts: advertsReducer,
 });
 
-// 🔹 Crear el store con middleware para manejar acciones asíncronas
-export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+// 🔹 Definimos el middleware thunk de forma más flexible
+const middleware = [thunk as any]; // 🔴 OJO: any
 
-// 🔹 Tipado del estado global
-export type RootState = ReturnType<typeof rootReducer>;
+// 🔹 Configuración de Redux DevTools
+const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // 🔴 OJO: any
+
+// 🔹 Creamos el store con middleware thunk correctamente tipado
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(...middleware)));
+
+export default store;
+export type { RootState };
