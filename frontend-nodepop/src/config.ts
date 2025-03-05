@@ -4,7 +4,7 @@ export const API_ENDPOINTS = {
   adverts: `${API_BASE_URL}/adverts`,
   tags: `${API_BASE_URL}/adverts/tags`,
   auth: {
-    login: `${API_BASE_URL}/auth/login`,
+    login: "http://localhost:3001/api/auth/login", // ✅ Revisión aquí
     signup: `${API_BASE_URL}/auth/signup`,
   },
 };
