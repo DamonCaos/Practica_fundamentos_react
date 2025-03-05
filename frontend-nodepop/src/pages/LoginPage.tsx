@@ -1,47 +1,24 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useDispatch, useSelector } from "react-redux"; 
+import { RootState } from "../redux/types";
+import { loginUser } from "../redux/actions";
 import { useNotification } from "../context/NotificationContext";
-import axios, { AxiosError } from "axios";
 import styles from "../styles/LoginPage.module.css";
-import { API_ENDPOINTS } from "../config";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const dispatch = useDispatch(); 
   const { addNotification } = useNotification();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [remember, setRemember] = useState<boolean>(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+
+  const loading = useSelector((state: RootState) => state.user.loading);
+  const error = useSelector((state: RootState) => state.user.error);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try {
-      console.log("Sending login request...");
-      const response = await axios.post<{ accessToken: string }>(API_ENDPOINTS.auth.login, {
-        email,
-        password,
-      });
-
-      console.log("Backend response:", response.data);
-
-      const token = response.data.accessToken;
-      if (!token) throw new Error("No valid token received.");
-
-      console.log("Token received:", token);
-      login(token, remember);
-
-      addNotification("Login successful!", "success");
-
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-
-      console.error("Login error:", axiosError.response?.data?.message || axiosError.message);
-
-      addNotification(
-        axiosError.response?.data?.message || "Error logging in.",
-        "error"
-      );
-    }
+    await dispatch<any>(loginUser(email, password, remember)); // ✅ Corrección: Asegurar tipado de Thunk
   };
 
   return (
@@ -72,8 +49,12 @@ const LoginPage = () => {
           />
           Remember me
         </label>
-        <button type="submit" className={styles.button}>Login</button>
+        <button type="submit" className={styles.button} disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
+
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };

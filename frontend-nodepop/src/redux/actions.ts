@@ -1,7 +1,8 @@
 import { Dispatch } from "redux";
+import { ThunkAction } from "redux-thunk";
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config";
-import { User, Advert } from "./types";
+import { User, Advert, RootState, RootAction } from "./types";
 
 // 🎯 ACCIONES DISPONIBLES
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -20,79 +21,91 @@ export const CREATE_ADVERT_FAILURE = "CREATE_ADVERT_FAILURE";
 // 🔹 ACTION CREATORS
 
 // 🔐 LOGIN USER
-export const loginUser = (email: string, password: string) => async (dispatch: Dispatch) => {
-  dispatch({ type: LOGIN_REQUEST });
+export const loginUser =
+  (email: string, password: string, remember: boolean): ThunkAction<void, RootState, unknown, RootAction> =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: LOGIN_REQUEST });
 
-  try {
-    const response = await axios.post<{ token: string; user: User }>(
-      API_ENDPOINTS.auth.login,
-      { email, password }
-    );
+    try {
+      const response = await axios.post<{ token: string; user: User }>(API_ENDPOINTS.auth.login, {
+        email,
+        password,
+      });
 
-    const { token, user } = response.data;
+      const { token, user } = response.data;
 
-    // Guardamos en sessionStorage
-    sessionStorage.setItem("authToken", token);
+      // Guardamos en sessionStorage o localStorage según "remember"
+      if (remember) {
+        localStorage.setItem("authToken", token);
+      } else {
+        sessionStorage.setItem("authToken", token);
+      }
 
-    dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
+      dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
 
-    dispatch({
-      type: LOGIN_FAILURE,
-      payload: axiosError.response?.data?.message || "Login failed",
-    });
-  }
-};
+      dispatch({
+        type: LOGIN_FAILURE,
+        payload: axiosError.response?.data?.message || "Login failed",
+      });
+    }
+  };
 
 // 🔴 LOGOUT USER
-export const logoutUser = () => {
+export const logoutUser = (): RootAction => {
+  localStorage.removeItem("authToken");
   sessionStorage.removeItem("authToken");
+
   return { type: LOGOUT };
 };
 
 // 📢 FETCH ADVERTS
-export const fetchAdverts = () => async (dispatch: Dispatch) => {
-  dispatch({ type: FETCH_ADVERTS_REQUEST });
+export const fetchAdverts =
+  (): ThunkAction<void, RootState, unknown, RootAction> =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: FETCH_ADVERTS_REQUEST });
 
-  try {
-    const token = sessionStorage.getItem("authToken");
-    if (!token) throw new Error("No authentication token found");
+    try {
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+      if (!token) throw new Error("No authentication token found");
 
-    const response = await axios.get<Advert[]>(API_ENDPOINTS.adverts, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const response = await axios.get<Advert[]>(API_ENDPOINTS.adverts, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    dispatch({ type: FETCH_ADVERTS_SUCCESS, payload: response.data });
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
+      dispatch({ type: FETCH_ADVERTS_SUCCESS, payload: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
 
-    dispatch({
-      type: FETCH_ADVERTS_FAILURE,
-      payload: axiosError.response?.data?.message || "Failed to fetch adverts",
-    });
-  }
-};
+      dispatch({
+        type: FETCH_ADVERTS_FAILURE,
+        payload: axiosError.response?.data?.message || "Failed to fetch adverts",
+      });
+    }
+  };
 
 // 🆕 CREATE ADVERT
-export const createAdvert = (advertData: Advert) => async (dispatch: Dispatch) => {
-  dispatch({ type: CREATE_ADVERT_REQUEST });
+export const createAdvert =
+  (advertData: Advert): ThunkAction<void, RootState, unknown, RootAction> =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: CREATE_ADVERT_REQUEST });
 
-  try {
-    const token = sessionStorage.getItem("authToken");
-    if (!token) throw new Error("No authentication token found");
+    try {
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+      if (!token) throw new Error("No authentication token found");
 
-    const response = await axios.post<Advert>(API_ENDPOINTS.adverts, advertData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const response = await axios.post<Advert>(API_ENDPOINTS.adverts, advertData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    dispatch({ type: CREATE_ADVERT_SUCCESS, payload: response.data });
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
+      dispatch({ type: CREATE_ADVERT_SUCCESS, payload: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
 
-    dispatch({
-      type: CREATE_ADVERT_FAILURE,
-      payload: axiosError.response?.data?.message || "Failed to create advert",
-    });
-  }
-};
+      dispatch({
+        type: CREATE_ADVERT_FAILURE,
+        payload: axiosError.response?.data?.message || "Failed to create advert",
+      });
+    }
+  };
