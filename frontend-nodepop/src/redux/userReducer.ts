@@ -11,6 +11,7 @@ import {
   const initialState: UserState = {
     isAuthenticated: false,
     loading: false,
+    user : null,
     error: null,
     token: null,
   };

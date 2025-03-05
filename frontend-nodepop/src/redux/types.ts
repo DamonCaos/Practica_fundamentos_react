@@ -38,12 +38,19 @@ export interface Advert {
     | FetchAdvertsRequestAction
     | FetchAdvertsSuccessAction
     | FetchAdvertsFailureAction;
-  
+  // 🔹 Tipo de un usuario
+    export interface User {
+        id: string;
+        email: string;
+        password: string
+        token: string;
+    }
   // 🔹 Estado inicial del usuario en Redux
   export interface UserState {
     isAuthenticated: boolean;
     loading: boolean;
     token: string | null;
+    user: User | null;
     error: string | null;
   }
   
