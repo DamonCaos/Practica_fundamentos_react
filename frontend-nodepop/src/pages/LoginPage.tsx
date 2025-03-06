@@ -1,28 +1,29 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; 
 import { loginUser } from "../redux/actions";
 import { RootState } from "../redux/types";
+import { useNotification } from "../context/NotificationContext"; // ✅ Importamos `useNotification`
 import styles from "../styles/LoginPage.module.css";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); 
+  const { addNotification } = useNotification(); // ✅ Usamos `useNotification`
   const { loading, error } = useSelector((state: RootState) => state.user);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(loginUser(email, password, remember) as any);
+    dispatch(loginUser(email, password, remember, navigate, addNotification) as any); // ✅ Pasamos `navigate` y `addNotification`
   };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Login</h2>
-
-      {/* 🔹 Muestra un loading mientras se hace login */}
-      {loading && <p className={styles.loading}>Logging in...</p>}
-
       <form onSubmit={handleLogin} className={styles.form}>
         <input
           type="email"
@@ -49,12 +50,10 @@ const LoginPage = () => {
           Remember me
         </label>
 
-        {/* 🔹 Botón deshabilitado si está cargando */}
         <button type="submit" className={styles.button} disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {/* 🔹 Mensaje de error si el login falla */}
         {error && <p className={styles.error}>{error}</p>}
       </form>
     </div>

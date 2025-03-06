@@ -2,6 +2,7 @@ import { Dispatch } from "redux";
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config";
 import { User, Advert, RootAction } from "./types";
+import { NavigateFunction } from "react-router-dom";
 
 // 🎯 ACCIONES DISPONIBLES
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -13,25 +14,22 @@ export const FETCH_ADVERTS_REQUEST = "FETCH_ADVERTS_REQUEST";
 export const FETCH_ADVERTS_SUCCESS = "FETCH_ADVERTS_SUCCESS";
 export const FETCH_ADVERTS_FAILURE = "FETCH_ADVERTS_FAILURE";
 
-export const CREATE_ADVERT_REQUEST = "CREATE_ADVERT_REQUEST";
-export const CREATE_ADVERT_SUCCESS = "CREATE_ADVERT_SUCCESS";
-export const CREATE_ADVERT_FAILURE = "CREATE_ADVERT_FAILURE";
-
-// 🔹 ACTION CREATORS
-
-// 🔐 LOGIN USER
+// 🔹 LOGIN USER CON NOTIFICACIÓN Y REDIRECCIÓN
 export const loginUser =
-  (email: string, password: string, remember: boolean) =>
+  (email: string, password: string, remember: boolean, navigate: NavigateFunction, addNotification: (message: string, type: "success" | "error" | "info") => void) =>
   async (dispatch: Dispatch<RootAction>) => {
     dispatch({ type: LOGIN_REQUEST });
 
     try {
-      const response = await axios.post(API_ENDPOINTS.auth.login, { email, password });
+      const response = await axios.post<{ accessToken: string }>(
+        API_ENDPOINTS.auth.login,
+        { email, password }
+      );
 
-      console.log("🔎 Respuesta completa del backend:", response.data);
+      console.log("🔎 Respuesta del backend:", response.data);
 
-      const { accessToken } = response.data; // ✅ Token recibido
-      const user = { id: email, email, password, token: accessToken }; // ✅ Creamos un objeto `User` completo
+      const { accessToken } = response.data;
+      const user: User = { id: email, email, password, token: accessToken };
 
       console.log("🔎 Token recibido en login:", accessToken);
       console.log("🔎 Usuario construido en login:", user);
@@ -50,20 +48,28 @@ export const loginUser =
       console.log("✅ Token y usuario guardados correctamente:", accessToken, user);
 
       dispatch({ type: LOGIN_SUCCESS, payload: { token: accessToken, user } });
+
+      // ✅ MOSTRAR NOTIFICACIÓN DE ÉXITO
+      addNotification("✅ Login successful! Welcome back!", "success");
+
+      // ✅ REDIRECCIÓN AUTOMÁTICA A HOME
+      navigate("/");
     } catch (error) {
       console.error("❌ Error en loginUser:", error);
       dispatch({
         type: LOGIN_FAILURE,
         payload: "Login failed",
       });
+
+      // ❌ NOTIFICACIÓN DE ERROR
+      addNotification("❌ Login failed. Please check your credentials.", "error");
     }
   };
 
-
-
-
-// 🔴 LOGOUT USER
-export const logoutUser = () => (dispatch: Dispatch<RootAction>) => {
+// 🔴 LOGOUT USER CON NOTIFICACIÓN
+export const logoutUser = 
+(addNotification: (message: string, type: "success" | "error" | "info") => void) => 
+(dispatch: Dispatch<RootAction>) => {
   console.log("🚪 Cerrando sesión...");
   localStorage.removeItem("authToken");
   localStorage.removeItem("user");
@@ -71,6 +77,9 @@ export const logoutUser = () => (dispatch: Dispatch<RootAction>) => {
   sessionStorage.removeItem("user");
 
   dispatch({ type: LOGOUT });
+
+  // ✅ MOSTRAR NOTIFICACIÓN DE LOGOUT
+  addNotification("✅ You have been logged out successfully!", "info");
 };
 
 // 📢 FETCH ADVERTS
