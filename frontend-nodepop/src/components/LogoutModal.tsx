@@ -1,17 +1,15 @@
-import { useAuth } from "../context/AuthContext";
 import styles from "./LogoutModal.module.css";
 
 interface LogoutModalProps {
   onClose: () => void;
+  onConfirm: () => void; // ✅ Añadimos esta prop
 }
 
-const LogoutModal = ({ onClose }: LogoutModalProps) => {
-  const { logout } = useAuth();
-
+const LogoutModal = ({ onClose, onConfirm }: LogoutModalProps) => {
   const handleLogout = () => {
     onClose(); // ✅ Cerrar modal primero
     setTimeout(() => {
-      logout(); // ✅ Logout con delay para mejor UX
+      onConfirm(); // ✅ Ahora llama a Redux
     }, 300);
   };
 
@@ -20,8 +18,12 @@ const LogoutModal = ({ onClose }: LogoutModalProps) => {
       <div className={styles.modalContent}>
         <h3>Are you sure you want to logout?</h3>
         <div className={styles.buttonContainer}>
-          <button onClick={handleLogout} className={styles.confirmButton}>Logout</button>
-          <button onClick={onClose} className={styles.cancelButton}>Cancel</button>
+          <button onClick={handleLogout} className={styles.confirmButton}>
+            Logout
+          </button>
+          <button onClick={onClose} className={styles.cancelButton}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>

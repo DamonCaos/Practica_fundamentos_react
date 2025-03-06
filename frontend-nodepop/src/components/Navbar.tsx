@@ -1,12 +1,20 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
-import LogoutModal from "./LogoutModal"; // ✅ Modal solo se usa aquí
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/types";
+import { logoutUser } from "../redux/actions";
+import LogoutModal from "./LogoutModal"; // ✅ Modal de confirmación
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const dispatch = useDispatch();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    dispatch(logoutUser()); // 🔹 Usamos Redux para manejar el logout
+    setShowLogoutModal(false); // 🔹 Cerramos el modal tras hacer logout
+  };
 
   return (
     <nav className={styles.navbar}>
@@ -29,8 +37,13 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* ✅ El modal solo se muestra si `showLogoutModal` es true */}
-      {showLogoutModal && <LogoutModal onClose={() => setShowLogoutModal(false)} />}
+      {/* ✅ Modal de Logout, asegurándonos de que se cierra correctamente */}
+      {showLogoutModal && (
+        <LogoutModal 
+          onClose={() => setShowLogoutModal(false)} 
+          onConfirm={handleLogout} // 🔹 Logout con Redux
+        />
+      )}
     </nav>
   );
 };
