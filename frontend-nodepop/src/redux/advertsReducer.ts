@@ -20,7 +20,7 @@ import {
         return { ...state, loading: true, error: null };
   
       case FETCH_ADVERTS_SUCCESS:
-        return { ...state, loading: false, adverts: action.payload };
+        return { ...state, loading: false, adverts: action.payload, error: null };
   
       case FETCH_ADVERTS_FAILURE:
         return { ...state, loading: false, error: action.payload };

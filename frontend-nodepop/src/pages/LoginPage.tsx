@@ -1,34 +1,28 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom"; // ✅ Importamos useNavigate
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/actions";
-import { useNotification } from "../context/NotificationContext";
+import { RootState } from "../redux/types";
 import styles from "../styles/LoginPage.module.css";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // ✅ Hook para redirigir después del login
-  const { addNotification } = useNotification();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const { loading, error } = useSelector((state: RootState) => state.user);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [remember, setRemember] = useState<boolean>(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try {
-      await dispatch(loginUser(email, password, remember) as any); // ✅ Esperamos a que Redux maneje la autenticación
-
-      addNotification("Login successful!", "success"); // ✅ Notificación de éxito
-      navigate("/"); // ✅ Redirigimos a Home
-    } catch (error) {
-      addNotification("Error logging in. Please try again.", "error"); // ✅ Notificación de error
-    }
+    dispatch(loginUser(email, password, remember) as any);
   };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Login</h2>
+
+      {/* 🔹 Muestra un loading mientras se hace login */}
+      {loading && <p className={styles.loading}>Logging in...</p>}
+
       <form onSubmit={handleLogin} className={styles.form}>
         <input
           type="email"
@@ -54,7 +48,14 @@ const LoginPage = () => {
           />
           Remember me
         </label>
-        <button type="submit" className={styles.button}>Login</button>
+
+        {/* 🔹 Botón deshabilitado si está cargando */}
+        <button type="submit" className={styles.button} disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        {/* 🔹 Mensaje de error si el login falla */}
+        {error && <p className={styles.error}>{error}</p>}
       </form>
     </div>
   );

@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/types"; 
 import styles from "../styles/HomePage.module.css";
 
 const HomePage = () => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
   return (
     <div className={styles.container}>

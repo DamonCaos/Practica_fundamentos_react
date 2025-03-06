@@ -1,36 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import styles from "../styles/AdvertsPage.module.css";
-import { useNotification } from "../context/NotificationContext";
 import { RootState } from "../redux/types";
 import { fetchAdverts } from "../redux/actions";
+import styles from "../styles/AdvertsPage.module.css";
 
 const AdvertsPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { adverts, loading, error } = useSelector((state: RootState) => state.adverts);
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
-  const { addNotification } = useNotification();
-  const [errorShown, setErrorShown] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      console.warn("🔴 No estás autenticado, redirigiendo al login...");
-      navigate("/login");
-      return;
-    }
-
-    console.log("✅ Cargando anuncios...");
     dispatch(fetchAdverts() as any);
-  }, [dispatch, isAuthenticated, navigate]);
-
-  useEffect(() => {
-    if (error && !errorShown) {
-      addNotification(error, "error");
-      setErrorShown(true);
-    }
-  }, [error, errorShown, addNotification]);
+  }, [dispatch]);
 
   return (
     <div className={styles.advertsContainer}>
@@ -40,10 +21,14 @@ const AdvertsPage = () => {
 
       <h2 className={styles.title}>Adverts</h2>
 
+      {/* 🔹 Mostramos un spinner mientras carga */}
+      {loading && <p className={styles.loading}>Loading adverts...</p>}
+
+      {/* 🔹 Mostramos mensaje de error si algo falla */}
+      {error && <p className={styles.error}>{error}</p>}
+
       <div className={styles.advertsGrid}>
-        {loading ? (
-          <p>Loading adverts...</p>
-        ) : adverts.length === 0 ? (
+        {!loading && adverts.length === 0 ? (
           <p>No adverts yet</p>
         ) : (
           adverts.map((advert) => (

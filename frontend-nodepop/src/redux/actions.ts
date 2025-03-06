@@ -26,107 +26,75 @@ export const loginUser =
     dispatch({ type: LOGIN_REQUEST });
 
     try {
-      const response = await axios.post<{ accessToken: string; user: User }>(
-        API_ENDPOINTS.auth.login,
-        { email, password }
-      );
+      const response = await axios.post(API_ENDPOINTS.auth.login, { email, password });
 
-      console.log("🔎 Respuesta del backend en login:", response.data);
+      console.log("🔎 Respuesta completa del backend:", response.data);
 
-      // ✅ Extraer correctamente el token
-      const { accessToken: token, user } = response.data;
+      const { accessToken } = response.data; // ✅ Token recibido
+      const user = { id: email, email, password, token: accessToken }; // ✅ Creamos un objeto `User` completo
 
-      if (!token) {
-        throw new Error("El backend no devolvió un token.");
-      }
+      console.log("🔎 Token recibido en login:", accessToken);
+      console.log("🔎 Usuario construido en login:", user);
 
-      console.log("✅ Token recibido y guardado:", token);
+      if (!accessToken || !user) throw new Error("Token o usuario no recibido en la respuesta");
 
       // ✅ Guardamos en sessionStorage o localStorage según "remember"
       if (remember) {
-        localStorage.setItem("authToken", token);
-        console.log("✅ Token guardado en localStorage:", localStorage.getItem("authToken"));
+        localStorage.setItem("authToken", accessToken);
+        localStorage.setItem("user", JSON.stringify(user));
       } else {
-        sessionStorage.setItem("authToken", token);
-        console.log("✅ Token guardado en sessionStorage:", sessionStorage.getItem("authToken"));
+        sessionStorage.setItem("authToken", accessToken);
+        sessionStorage.setItem("user", JSON.stringify(user));
       }
 
-      dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      console.error("❌ Error en login:", axiosError.response?.data || axiosError.message);
+      console.log("✅ Token y usuario guardados correctamente:", accessToken, user);
 
+      dispatch({ type: LOGIN_SUCCESS, payload: { token: accessToken, user } });
+    } catch (error) {
+      console.error("❌ Error en loginUser:", error);
       dispatch({
         type: LOGIN_FAILURE,
-        payload: axiosError.response?.data?.message || "Login failed",
+        payload: "Login failed",
       });
     }
   };
 
 
 
-// 🔴 LOGOUT USER (✅ Ahora como una acción válida para Redux)
-export const logoutUser = () => (dispatch: Dispatch<RootAction>) => {
-  localStorage.removeItem("authToken");
-  sessionStorage.removeItem("authToken");
 
-  dispatch({ type: LOGOUT }); // ✅ Ahora correctamente ejecutado con dispatch
+// 🔴 LOGOUT USER
+export const logoutUser = () => (dispatch: Dispatch<RootAction>) => {
+  console.log("🚪 Cerrando sesión...");
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("authToken");
+  sessionStorage.removeItem("user");
+
+  dispatch({ type: LOGOUT });
 };
 
 // 📢 FETCH ADVERTS
 export const fetchAdverts = () => async (dispatch: Dispatch<RootAction>) => {
-    dispatch({ type: FETCH_ADVERTS_REQUEST });
-  
-    try {
-      const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-  
-      console.log("🔎 Token utilizado en fetchAdverts:", token);
-  
-      if (!token) {
-        dispatch({
-          type: FETCH_ADVERTS_FAILURE,
-          payload: "Unauthorized: No authentication token found",
-        });
-        return;
-      }
-  
-      const response = await axios.get<Advert[]>(API_ENDPOINTS.adverts, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      dispatch({ type: FETCH_ADVERTS_SUCCESS, payload: response.data });
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      console.error("❌ Error en fetchAdverts:", axiosError.response?.data || axiosError.message);
-      dispatch({
-        type: FETCH_ADVERTS_FAILURE,
-        payload: axiosError.response?.data?.message || "Failed to fetch adverts",
-      });
-    }
-  };
-  
-  
-// 🆕 CREATE ADVERT
-export const createAdvert =
-  (advertData: Advert) => async (dispatch: Dispatch<RootAction>) => {
-    dispatch({ type: CREATE_ADVERT_REQUEST });
+  dispatch({ type: FETCH_ADVERTS_REQUEST });
 
-    try {
-      const token =
-        sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-      if (!token) throw new Error("No authentication token found");
+  try {
+    const token =
+      sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
-      const response = await axios.post<Advert>(API_ENDPOINTS.adverts, advertData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    console.log("🔎 Token utilizado en fetchAdverts:", token);
 
-      dispatch({ type: CREATE_ADVERT_SUCCESS, payload: response.data });
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
+    if (!token) throw new Error("No authentication token found");
 
-      dispatch({
-        type: CREATE_ADVERT_FAILURE,
-        payload: axiosError.response?.data?.message || "Failed to create advert",
-      });
-    }
-  };
+    const response = await axios.get<Advert[]>(API_ENDPOINTS.adverts, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    dispatch({ type: FETCH_ADVERTS_SUCCESS, payload: response.data });
+  } catch (error) {
+    console.error("❌ Error en fetchAdverts:", error);
+    dispatch({
+      type: FETCH_ADVERTS_FAILURE,
+      payload: "Failed to fetch adverts",
+    });
+  }
+};
