@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config";
-import { User, Advert, RootState, RootAction } from "./types";
+import { User, Advert, RootAction } from "./types";
 
 // 🎯 ACCIONES DISPONIBLES
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -51,12 +51,12 @@ export const loginUser =
     }
   };
 
-// 🔴 LOGOUT USER
-export const logoutUser = (): RootAction => {
+// 🔴 LOGOUT USER (✅ Ahora como una acción válida para Redux)
+export const logoutUser = () => (dispatch: Dispatch<RootAction>) => {
   localStorage.removeItem("authToken");
   sessionStorage.removeItem("authToken");
 
-  return { type: LOGOUT };
+  dispatch({ type: LOGOUT }); // ✅ Ahora correctamente ejecutado con dispatch
 };
 
 // 📢 FETCH ADVERTS
