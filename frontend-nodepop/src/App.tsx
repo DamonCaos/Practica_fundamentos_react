@@ -1,4 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "./redux/types";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -6,10 +8,10 @@ import AdvertsPage from "./pages/AdvertsPage";
 import DetailAdvertPage from "./pages/DetailAdvertPage";
 import NewAdvertPage from "./pages/NewAdvertPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { useAuth } from "./context/AuthContext";
+//import { useAuth } from "./context/AuthContext";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
   const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
   if (!isAuthenticated && !token) {
@@ -18,6 +20,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 
   return children;
 };
+
 
 function App() {
   return (
