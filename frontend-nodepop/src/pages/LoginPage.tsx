@@ -1,24 +1,29 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux"; 
-import { RootState } from "../redux/types";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; // ✅ Importamos useNavigate
 import { loginUser } from "../redux/actions";
 import { useNotification } from "../context/NotificationContext";
 import styles from "../styles/LoginPage.module.css";
 
 const LoginPage = () => {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // ✅ Hook para redirigir después del login
   const { addNotification } = useNotification();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
 
-  const loading = useSelector((state: RootState) => state.user.loading);
-  const error = useSelector((state: RootState) => state.user.error);
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch<any>(loginUser(email, password, remember)); // ✅ Corrección: Asegurar tipado de Thunk
+
+    try {
+      await dispatch(loginUser(email, password, remember) as any); // ✅ Esperamos a que Redux maneje la autenticación
+
+      addNotification("Login successful!", "success"); // ✅ Notificación de éxito
+      navigate("/"); // ✅ Redirigimos a Home
+    } catch (error) {
+      addNotification("Error logging in. Please try again.", "error"); // ✅ Notificación de error
+    }
   };
 
   return (
@@ -49,12 +54,8 @@ const LoginPage = () => {
           />
           Remember me
         </label>
-        <button type="submit" className={styles.button} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        <button type="submit" className={styles.button}>Login</button>
       </form>
-
-      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };

@@ -1,67 +1,36 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "../styles/AdvertsPage.module.css";
 import { useNotification } from "../context/NotificationContext";
-import { API_ENDPOINTS } from "../config"; // ✅ Importamos correctamente los endpoints
-
-interface Advert {
-  id: string;
-  name: string;
-  price: number;
-  sale: boolean;
-  tags: string[];
-  photo?: string;
-}
+import { RootState } from "../redux/types";
+import { fetchAdverts } from "../redux/actions";
 
 const AdvertsPage = () => {
-  const [adverts, setAdverts] = useState<Advert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { adverts, loading, error } = useSelector((state: RootState) => state.adverts);
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
   const { addNotification } = useNotification();
-
-  const [filters, setFilters] = useState({
-    name: "",
-    minPrice: "",
-    maxPrice: "",
-    sale: "",
-    tag: "",
-  });
+  const [errorShown, setErrorShown] = useState(false);
 
   useEffect(() => {
-    fetchAdverts();
-  }, []);
-
-  const fetchAdverts = async () => {
-    try {
-      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-
-      if (!token) {
-        addNotification("You are not authenticated. Please log in.", "error");
-        setLoading(false);
-        return;
-      }
-
-      const queryParams = new URLSearchParams();
-      if (filters.name) queryParams.append("name", filters.name);
-      if (filters.sale) queryParams.append("sale", filters.sale);
-      if (filters.tag) queryParams.append("tags", filters.tag);
-      if (filters.minPrice && filters.maxPrice) {
-        queryParams.append("price", `${filters.minPrice}-${filters.maxPrice}`);
-      }
-
-      // ✅ Usamos API_ENDPOINTS.adverts en lugar de concatenar manualmente
-      const response = await axios.get(`${API_ENDPOINTS.adverts}?${queryParams.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setAdverts(response.data);
-      addNotification("Adverts loaded successfully!", "success");
-    } catch (err) {
-      addNotification("Failed to load adverts.", "error");
-    } finally {
-      setLoading(false);
+    if (!isAuthenticated) {
+      console.warn("🔴 No estás autenticado, redirigiendo al login...");
+      navigate("/login");
+      return;
     }
-  };
+
+    console.log("✅ Cargando anuncios...");
+    dispatch(fetchAdverts() as any);
+  }, [dispatch, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (error && !errorShown) {
+      addNotification(error, "error");
+      setErrorShown(true);
+    }
+  }, [error, errorShown, addNotification]);
 
   return (
     <div className={styles.advertsContainer}>
